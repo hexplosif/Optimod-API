@@ -4,6 +4,7 @@ import com.hexplosif.optimodapi.model.DeliveryRequest;
 import com.hexplosif.optimodapi.service.DeliveryRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,7 +21,7 @@ public class DeliveryRequestController {
     }
 
     @GetMapping({"/deliveryrequest/{id}"})
-    public DeliveryRequest getDeliveryRequestById(Long id) {
+    public DeliveryRequest getDeliveryRequestById(@PathVariable("id") final Long id) {
         return (DeliveryRequest)this.DeliveryRequestService.findDeliveryRequestById(id).orElse(null);
     }
 }
