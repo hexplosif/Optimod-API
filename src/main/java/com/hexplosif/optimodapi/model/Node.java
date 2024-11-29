@@ -13,7 +13,6 @@ import lombok.Data;
 @Table(name = "node")
 public class Node {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "latitude")
