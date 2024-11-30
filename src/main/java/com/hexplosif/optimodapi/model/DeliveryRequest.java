@@ -16,9 +16,12 @@ public class DeliveryRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "pickup_location")
-    private Long idPickupLocation;
+    @Column(name = "pickup")
+    private Long idPickup;
 
-    @Column(name = "delivery_location")
-    private Long idDeliveryLocation;
+    @Column(name = "delivery")
+    private Long idDelivery;
+
+    @Column(name = "warehouse")
+    private Long idWarehouse;
 }

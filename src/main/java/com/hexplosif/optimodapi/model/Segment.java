@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 import lombok.Data;
 
 @Data
@@ -24,7 +25,7 @@ public class Segment {
     private Long idDestination;
 
     @Column(name = "length")
-    private int length;
+    private Double length;
 
     @Column(name = "name")
     private String name;

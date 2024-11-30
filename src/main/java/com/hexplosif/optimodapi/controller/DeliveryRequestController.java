@@ -3,25 +3,93 @@ package com.hexplosif.optimodapi.controller;
 import com.hexplosif.optimodapi.model.DeliveryRequest;
 import com.hexplosif.optimodapi.service.DeliveryRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 public class DeliveryRequestController {
+
     @Autowired
-    private DeliveryRequestService DeliveryRequestService;
+    private DeliveryRequestService deliveryrequestService;
 
-    public DeliveryRequestController() {
+    /**
+     * Create - Add a new deliveryrequest
+     * @param deliveryrequest An object deliveryrequest
+     * @return The deliveryrequest object saved
+     */
+    @PostMapping("/deliveryrequest")
+    public DeliveryRequest createDeliveryRequest(@RequestBody DeliveryRequest deliveryrequest) {
+        return deliveryrequestService.saveDeliveryRequest(deliveryrequest);
     }
 
-    @GetMapping({"/deliveryrequests"})
+
+    /**
+     * Read - Get one deliveryrequest
+     * @param id The id of the deliveryrequest
+     * @return An DeliveryRequest object full filled
+     */
+    @GetMapping("/deliveryrequest/{id}")
+    public DeliveryRequest getDeliveryRequest(@PathVariable("id") final Long id) {
+        Optional<DeliveryRequest> deliveryrequest = deliveryrequestService.findDeliveryRequestById(id);
+        if(deliveryrequest.isPresent()) {
+            return deliveryrequest.get();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Read - Get all deliveryrequests
+     * @return - An Iterable object of DeliveryRequest full filled
+     */
+    @GetMapping("/deliveryrequests")
     public Iterable<DeliveryRequest> getDeliveryRequests() {
-        return this.DeliveryRequestService.findAllDeliveryRequests();
+        return deliveryrequestService.findAllDeliveryRequests();
     }
 
-    @GetMapping({"/deliveryrequest/{id}"})
-    public DeliveryRequest getDeliveryRequestById(@PathVariable("id") final Long id) {
-        return (DeliveryRequest)this.DeliveryRequestService.findDeliveryRequestById(id).orElse(null);
+    /**
+     * Update - Update an existing deliveryrequest
+     * @param id - The id of the deliveryrequest to update
+     * @param deliveryrequest - The deliveryrequest object updated
+     * @return
+     */
+    @PutMapping("/deliveryrequest/{id}")
+    public DeliveryRequest updateDeliveryRequest(@PathVariable("id") final Long id, @RequestBody DeliveryRequest deliveryrequest) {
+        Optional<DeliveryRequest> e = deliveryrequestService.findDeliveryRequestById(id);
+        if(e.isPresent()) {
+            DeliveryRequest currentDeliveryRequest = e.get();
+
+            currentDeliveryRequest.setIdDelivery
+
+                    (deliveryrequest.getIdDelivery
+
+                            ());
+            currentDeliveryRequest.setIdPickup
+
+                    (deliveryrequest.getIdPickup
+
+                            ());
+            currentDeliveryRequest.setIdWarehouse
+
+                    (deliveryrequest.getIdWarehouse
+
+                            ());
+
+            deliveryrequestService.saveDeliveryRequest(currentDeliveryRequest);
+            return currentDeliveryRequest;
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
+     * Delete - Delete an deliveryrequest
+     * @param id - The id of the deliveryrequest to delete
+     */
+    @DeleteMapping("/deliveryrequest/{id}")
+    public void deleteDeliveryRequest(@PathVariable("id") final Long id) {
+        deliveryrequestService.deleteDeliveryRequestById(id);
     }
 }

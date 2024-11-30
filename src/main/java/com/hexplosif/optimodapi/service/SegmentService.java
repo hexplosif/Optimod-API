@@ -10,29 +10,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class SegmentService {
     @Autowired
-    private SegmentRepository nodeRepository;
+    private SegmentRepository segmentRepository;
 
     public Optional<Segment> findSegmentById(final Long id) {
-        return this.nodeRepository.findById(id);
+        return this.segmentRepository.findById(id);
     }
 
-    public Segment saveSegment(final Segment node) {
-        return (Segment) this.nodeRepository.save(node);
+    public Segment saveSegment(final Segment segment) {
+        return (Segment) this.segmentRepository.save(segment);
     }
 
     public void deleteSegmentById(final Long id) {
-        this.nodeRepository.deleteById(id);
+        this.segmentRepository.deleteById(id);
     }
 
     public Iterable<Segment> findAllSegments() {
-        return this.nodeRepository.findAll();
+        return this.segmentRepository.findAll();
     }
 
     public void deleteAllSegments() {
-        this.nodeRepository.deleteAll();
+        this.segmentRepository.deleteAll();
     }
 
     public long countSegments() {
-        return this.nodeRepository.count();
+        return this.segmentRepository.count();
     }
 }
