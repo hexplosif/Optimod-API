@@ -49,6 +49,14 @@ public class SegmentController {
     }
 
     /**
+     * Delete - Delete all segments
+     */
+    @DeleteMapping("/segments")
+    public void deleteSegments() {
+        segmentService.deleteAllSegments();
+    }
+
+    /**
      * Update - Update an existing segment
      * @param id - The id of the segment to update
      * @param segment - The segment object updated

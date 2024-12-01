@@ -49,6 +49,14 @@ public class DeliveryRequestController {
     }
 
     /**
+     * Delete - Delete all deliveryrequests
+     */
+    @DeleteMapping("/deliveryrequests")
+    public void deleteDeliveryRequests() {
+        deliveryrequestService.deleteAllDeliveryRequests();
+    }
+
+    /**
      * Update - Update an existing deliveryrequest
      * @param id - The id of the deliveryrequest to update
      * @param deliveryrequest - The deliveryrequest object updated
@@ -60,21 +68,9 @@ public class DeliveryRequestController {
         if(e.isPresent()) {
             DeliveryRequest currentDeliveryRequest = e.get();
 
-            currentDeliveryRequest.setIdDelivery
-
-                    (deliveryrequest.getIdDelivery
-
-                            ());
-            currentDeliveryRequest.setIdPickup
-
-                    (deliveryrequest.getIdPickup
-
-                            ());
-            currentDeliveryRequest.setIdWarehouse
-
-                    (deliveryrequest.getIdWarehouse
-
-                            ());
+            currentDeliveryRequest.setIdDelivery(deliveryrequest.getIdDelivery());
+            currentDeliveryRequest.setIdPickup(deliveryrequest.getIdPickup());
+            currentDeliveryRequest.setIdWarehouse(deliveryrequest.getIdWarehouse());
 
             deliveryrequestService.saveDeliveryRequest(currentDeliveryRequest);
             return currentDeliveryRequest;

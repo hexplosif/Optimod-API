@@ -49,6 +49,14 @@ public class NodeController {
     }
 
     /**
+     * Delete - Delete all nodes
+     */
+    @DeleteMapping("/nodes")
+    public void deleteNodes() {
+        nodeService.deleteAllNodes();
+    }
+
+    /**
      * Update - Update an existing node
      * @param id - The id of the node to update
      * @param node - The node object updated
