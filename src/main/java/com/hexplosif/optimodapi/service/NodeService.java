@@ -2,6 +2,8 @@ package com.hexplosif.optimodapi.service;
 
 import com.hexplosif.optimodapi.model.Node;
 import com.hexplosif.optimodapi.repository.NodeRepository;
+
+import java.util.List;
 import java.util.Optional;
 import lombok.Generated;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,10 @@ public class NodeService {
 
     public Node saveNode(final Node node) {
         return (Node) this.nodeRepository.save(node);
+    }
+
+    public Iterable<Node> saveNodes(final Iterable<Node> nodes) {
+        return this.nodeRepository.saveAll(nodes);
     }
 
     public void deleteNodeById(final Long id) {

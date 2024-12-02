@@ -23,6 +23,15 @@ public class NodeController {
         return nodeService.saveNode(node);
     }
 
+    /**
+     * Create - Add new nodes
+     * @param nodes An iterable object of node
+     * @return An Iterable object of Node object saved
+     */
+    @PostMapping("/nodes")
+    public Iterable<Node> createNodes(@RequestBody Iterable<Node> nodes) {
+        return nodeService.saveNodes(nodes);
+    }
 
     /**
      * Read - Get one node

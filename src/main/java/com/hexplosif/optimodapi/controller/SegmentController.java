@@ -23,6 +23,15 @@ public class SegmentController {
         return segmentService.saveSegment(segment);
     }
 
+    /**
+     * Create - Add new segments
+     * @param segments An iterable object of segment
+     * @return An Iterable object of Segment object saved
+     */
+    @PostMapping("/segments")
+    public Iterable<Segment> createSegments(@RequestBody Iterable<Segment> segments) {
+        return segmentService.saveSegments(segments);
+    }
 
     /**
      * Read - Get one segment

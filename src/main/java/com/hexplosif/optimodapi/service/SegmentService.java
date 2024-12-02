@@ -35,4 +35,8 @@ public class SegmentService {
     public long countSegments() {
         return this.segmentRepository.count();
     }
+
+    public Iterable<Segment> saveSegments(Iterable<Segment> segments) {
+        return this.segmentRepository.saveAll(segments);
+    }
 }
