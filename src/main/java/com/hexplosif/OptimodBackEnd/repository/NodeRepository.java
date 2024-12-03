@@ -1,6 +1,6 @@
-package com.hexplosif.optimodapi.repository;
+package com.hexplosif.OptimodBackEnd.repository;
 
-import com.hexplosif.optimodapi.model.Node;
+import com.hexplosif.OptimodBackEnd.model.Node;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.hexplosif</groupId>
-    <artifactId>Optimod-API</artifactId>
+    <artifactId>Optimod-BackEnd</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Optimod-API</name>
     <description>Optimod-API</description>

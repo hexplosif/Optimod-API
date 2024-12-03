@@ -1,7 +1,7 @@
-package com.hexplosif.optimodapi;
+package com.hexplosif.OptimodBackEnd;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexplosif.optimodapi.model.Node;
+import com.hexplosif.OptimodBackEnd.model.Node;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

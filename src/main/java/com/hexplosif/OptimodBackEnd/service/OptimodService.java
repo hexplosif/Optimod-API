@@ -1,11 +1,11 @@
-package com.hexplosif.optimodapi.service;
+package com.hexplosif.OptimodBackEnd.service;
 
-import com.hexplosif.optimodapi.model.DeliveryRequest;
-import com.hexplosif.optimodapi.model.Node;
-import com.hexplosif.optimodapi.model.Segment;
-import com.hexplosif.optimodapi.repository.DeliveryRequestRepository;
-import com.hexplosif.optimodapi.repository.NodeRepository;
-import com.hexplosif.optimodapi.repository.SegmentRepository;
+import com.hexplosif.OptimodBackEnd.model.DeliveryRequest;
+import com.hexplosif.OptimodBackEnd.model.Node;
+import com.hexplosif.OptimodBackEnd.model.Segment;
+import com.hexplosif.OptimodBackEnd.repository.DeliveryRequestRepository;
+import com.hexplosif.OptimodBackEnd.repository.NodeRepository;
+import com.hexplosif.OptimodBackEnd.repository.SegmentRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

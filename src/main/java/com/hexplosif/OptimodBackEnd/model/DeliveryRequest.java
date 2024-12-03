@@ -1,4 +1,4 @@
-package com.hexplosif.optimodapi.model;
+package com.hexplosif.OptimodBackEnd.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

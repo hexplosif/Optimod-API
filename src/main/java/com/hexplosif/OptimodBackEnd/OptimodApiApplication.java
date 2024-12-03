@@ -1,4 +1,4 @@
-package com.hexplosif.optimodapi;
+package com.hexplosif.OptimodBackEnd;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
