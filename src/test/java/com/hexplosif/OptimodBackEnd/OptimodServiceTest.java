@@ -124,7 +124,7 @@ public class OptimodServiceTest {
     @Test
     public void testWrongReseauTagLoadNode() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
-            optimodService.loadNode("src/test/java/testResources/wrongReseauTagXML.xml");
+            optimodService.loadNode("src/test/java/testResources/wrongReseauTag.xml");
         });
         String expectedMessage = "No 'reseau' tag found in the XML file";
         String actualMessage = exception.getMessage();
@@ -134,7 +134,7 @@ public class OptimodServiceTest {
     @Test
     public void testWrongNoeudTagLoadNode() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
-            optimodService.loadNode("src/test/java/testResources/wrongNoeudTagXML.xml");
+            optimodService.loadNode("src/test/java/testResources/wrongNoeudTag.xml");
         });
         String expectedMessage = "No 'noeud' tag found in the XML file";
         String actualMessage = exception.getMessage();
@@ -144,7 +144,7 @@ public class OptimodServiceTest {
     @Test
     public void testWrongReseauTagLoadSegment() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
-            optimodService.loadSegment("src/test/java/testResources/wrongReseauTagXML.xml");
+            optimodService.loadSegment("src/test/java/testResources/wrongReseauTag.xml");
         });
         String expectedMessage = "No 'reseau' tag found in the XML file";
         String actualMessage = exception.getMessage();
@@ -154,7 +154,7 @@ public class OptimodServiceTest {
     @Test
     public void testWrongTronconTagLoadSegment() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
-            optimodService.loadSegment("src/test/java/testResources/wrongTronconTagXML.xml");
+            optimodService.loadSegment("src/test/java/testResources/wrongTronconTag.xml");
         });
         String expectedMessage = "No 'troncon' tag found in the XML file";
         String actualMessage = exception.getMessage();
@@ -164,7 +164,7 @@ public class OptimodServiceTest {
     @Test
     public void testWrongEntrepotTagLoadDeliveryRequest() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
-            optimodService.loadDeliveryRequest("src/test/java/testResources/wrongEntrepotTagXML.xml");
+            optimodService.loadDeliveryRequest("src/test/java/testResources/wrongEntrepotTag.xml");
         });
         String expectedMessage = "No warehouse found in the first line of the XML file";
         String actualMessage = exception.getMessage();
@@ -174,7 +174,7 @@ public class OptimodServiceTest {
     @Test
     public void testWrongLivraisonTagLoadDeliveryRequest() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
-            optimodService.loadDeliveryRequest("src/test/java/testResources/wrongLivraisonTagXML.xml");
+            optimodService.loadDeliveryRequest("src/test/java/testResources/wrongLivraisonTag.xml");
         });
         String expectedMessage = "No delivery request found in the XML file";
         String actualMessage = exception.getMessage();
@@ -184,7 +184,7 @@ public class OptimodServiceTest {
     @Test
     public void testWrongDemandeTagLoadDeliveryRequest() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
-            optimodService.loadDeliveryRequest("src/test/java/testResources/wrongDemandeTagXML.xml");
+            optimodService.loadDeliveryRequest("src/test/java/testResources/wrongDemandeTag.xml");
         });
         String expectedMessage = "No 'demandeDeLivraisons' tag found in the XML file";
         String actualMessage = exception.getMessage();
@@ -192,5 +192,94 @@ public class OptimodServiceTest {
     }
 
     // Those tests make sure that the error handling of wrong attributes is correct
+    @Test
+    public void testWrongIdNodeAttributeLoadNode() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadNode("src/test/java/testResources/wrongIdNoeudAttribute.xml");
+        });
+        String expectedMessage = "No id found for the node : ";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testWrongLatitudeNodeAttributeLoadNode() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadNode("src/test/java/testResources/wrongLatitudeNoeudAttribute.xml");
+        });
+        String expectedMessage = "No latitude found for the node : ";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testWrongLongitudeNodeAttributeLoadNode() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadNode("src/test/java/testResources/wrongLongitudeNoeudAttribute.xml");
+        });
+        String expectedMessage = "No longitude found for the node : ";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testWrongDestinationSegmentAttributeLoadSegment() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadSegment("src/test/java/testResources/wrongDestinationTronconAttribute.xml");
+        });
+        String expectedMessage = "No destination found for the segment : ";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testWrongLengthSegmentAttributeLoadSegment() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadSegment("src/test/java/testResources/wrongLongueurTronconAttribute.xml");
+        });
+        String expectedMessage = "No length found for the segment : ";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testWrongOriginSegmentAttributeLoadSegment() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadSegment("src/test/java/testResources/wrongOrigineTronconAttribute.xml");
+        });
+        String expectedMessage = "No origin found for the segment : ";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testWrongAdressWarehouseAttributeLoadDeliveryRequest() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadDeliveryRequest("src/test/java/testResources/wrongAdresseEntrepotAttribute.xml");
+        });
+        String expectedMessage = "No warehouse address found in the XML file";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testWrongAdressPickupAttributeLoadDeliveryRequest() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadDeliveryRequest("src/test/java/testResources/wrongAdresseEnlevementAttribute.xml");
+        });
+        String expectedMessage = "No pickup address found for the delivery request : ";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testWrongAdressDeliveryAttributeLoadDeliveryRequest() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadDeliveryRequest("src/test/java/testResources/wrongAdresseLivraisonAttribute.xml");
+        });
+        String expectedMessage = "No delivery address found for the delivery request : ";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
 }
 

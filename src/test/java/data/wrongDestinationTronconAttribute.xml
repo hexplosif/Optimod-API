@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<reseau>
+    <noeud id="25175791" latitude="45.75406" longitude="4.857418"/>
+    <troncon destination="" longueur="136.00636" nomRue="Rue de l'Abondance" origine="25175791"/>
+</reseau>
