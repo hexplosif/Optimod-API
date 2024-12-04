@@ -53,9 +53,6 @@ public class OptimodController {
         try {
             String XMLFileName = saveUploadedFile(file);
 
-            // Supprimer les données existantes
-            optimodService.deleteAllDeliveryRequests();
-
             // Charger les données
             optimodService.loadDeliveryRequest(XMLFileName);
 
