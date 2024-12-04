@@ -35,7 +35,7 @@ public class OptimodController {
 
             // Renvoyer les données mises à jour
             Map<String, Object> response = new HashMap<>();
-            response.put("nodes", optimodService.findAllNodes()); // Renvoie les nodes
+            response.put("nodes", optimodService.findAllNodes()); // Renvoie-les nodes
             response.put("segments", optimodService.findAllSegments()); // Renvoie les segments
 
             return ResponseEntity.ok(response);
@@ -96,7 +96,7 @@ public class OptimodController {
     /**
      * Read - Get one node
      * @param id The id of the node
-     * @return An Node object full filled
+     * @return A Node object fulfilled
      */
     @GetMapping("/node/{id}")
     public Node getNode(@PathVariable("id") final Long id) {
@@ -110,7 +110,7 @@ public class OptimodController {
 
     /**
      * Read - Get all nodes
-     * @return - An Iterable object of Node full filled
+     * @return - An Iterable object of Node fulfilled
      */
     @GetMapping("/nodes")
     public Iterable<Node> getNodes() {
@@ -129,7 +129,7 @@ public class OptimodController {
      * Update - Update an existing node
      * @param id - The id of the node to update
      * @param node - The node object updated
-     * @return
+     * @return The Node object updated
      */
     @PutMapping("/node/{id}")
     public Node updateNode(@PathVariable("id") final Long id, @RequestBody Node node) {
@@ -187,7 +187,7 @@ public class OptimodController {
     /**
      * Read - Get one segment
      * @param id The id of the segment
-     * @return An Segment object full filled
+     * @return A Segment object fulfilled
      */
     @GetMapping("/segment/{id}")
     public Segment getSegment(@PathVariable("id") final Long id) {
@@ -201,7 +201,7 @@ public class OptimodController {
 
     /**
      * Read - Get all segments
-     * @return - An Iterable object of Segment full filled
+     * @return - An Iterable object of Segment fulfilled
      */
     @GetMapping("/segments")
     public Iterable<Segment> getSegments() {
@@ -220,7 +220,7 @@ public class OptimodController {
      * Update - Update an existing segment
      * @param id - The id of the segment to update
      * @param segment - The segment object updated
-     * @return
+     * @return The Segment object updated
      */
     @PutMapping("/segment/{id}")
     public Segment updateSegment(@PathVariable("id") final Long id, @RequestBody Segment segment) {
@@ -277,7 +277,7 @@ public class OptimodController {
     /**
      * Read - Get one deliveryrequest
      * @param id The id of the deliveryrequest
-     * @return An DeliveryRequest object full filled
+     * @return An DeliveryRequest object fulfilled
      */
     @GetMapping("/deliveryrequest/{id}")
     public DeliveryRequest getDeliveryRequest(@PathVariable("id") final Long id) {
@@ -291,7 +291,7 @@ public class OptimodController {
 
     /**
      * Read - Get all deliveryrequests
-     * @return - An Iterable object of DeliveryRequest full filled
+     * @return - An Iterable object of DeliveryRequest fulfilled
      */
     @GetMapping("/deliveryrequests")
     public Iterable<DeliveryRequest> getDeliveryRequests() {
@@ -310,7 +310,7 @@ public class OptimodController {
      * Update - Update an existing deliveryrequest
      * @param id - The id of the deliveryrequest to update
      * @param deliveryrequest - The deliveryrequest object updated
-     * @return
+     * @return The DeliveryRequest object updated
      */
     @PutMapping("/deliveryrequest/{id}")
     public DeliveryRequest updateDeliveryRequest(@PathVariable("id") final Long id, @RequestBody DeliveryRequest deliveryrequest) {
