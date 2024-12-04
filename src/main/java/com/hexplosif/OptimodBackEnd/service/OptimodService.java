@@ -236,8 +236,8 @@ public class OptimodService {
                     }
 
                     DeliveryRequest deliveryRequest = new DeliveryRequest();
-                    deliveryRequest.setIdDelivery(Long.parseLong(adresseEnlevement));
-                    deliveryRequest.setIdPickup(Long.parseLong(adresseLivraison));
+                    deliveryRequest.setIdDelivery(Long.parseLong(adresseLivraison));
+                    deliveryRequest.setIdPickup(Long.parseLong(adresseEnlevement));
                     deliveryRequest.setIdWarehouse(Long.parseLong(warehouseAddress));
 
                     //System.out.println("DeliveryRequest: " + deliveryRequest.getIdDelivery() + ", Pickup: " + deliveryRequest.getIdPickup() + ", WarehouseLocation: " + deliveryRequest.getIdWarehouse());
