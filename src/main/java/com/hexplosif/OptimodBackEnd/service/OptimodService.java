@@ -64,7 +64,7 @@ public class OptimodService {
 
             // Integrity check
             if (nodeList.getLength() == 0) {
-                throw new Exception("No node found in the XML file");
+                throw new Exception("No 'noeud' tag found in the XML file");
             }
 
             List<Node> tmpListNodes = (List<Node>) nodeRepository.findAll();
@@ -132,7 +132,7 @@ public class OptimodService {
 
             // Integrity check
             if (listeTroncons.getLength() == 0) {
-                throw new Exception("No 'troncon' tag in the XML file");
+                throw new Exception("No 'troncon' tag found in the XML file");
             }
 
             List<Segment> tmpListSegments = (List<Segment>) segmentRepository.findAll();

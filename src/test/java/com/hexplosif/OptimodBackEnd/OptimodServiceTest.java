@@ -14,6 +14,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
@@ -36,6 +38,7 @@ public class OptimodServiceTest {
         optimodService.deleteAllDeliveryRequests();
     }
 
+    // Those tests make sure that the nodes, segments and delivery requests are loaded correctly
     @Test
     public void testCorrectLoadNode() throws Exception {
         optimodService.loadNode("src/test/java/testResources/petitPlan.xml");
@@ -67,11 +70,127 @@ public class OptimodServiceTest {
 
         // Verify that delivery requests are loaded correctly
         Optional<DeliveryRequest> deliveryRequest = optimodService.findDeliveryRequestById(1L);
-        System.out.println(deliveryRequest);
         assertTrue("The delivery request doesn't exist", deliveryRequest.isPresent());
         assertEquals("The delivery request warehouse is incorrect",342873658L, deliveryRequest.get().getIdWarehouse());
         assertEquals("The delivery request pickup address is incorrect",208769039L, deliveryRequest.get().getIdPickup());
         assertEquals("The delivery request delivery address is incorrect",25173820L, deliveryRequest.get().getIdDelivery());
     }
+
+    // Those tests make sure that a non XML file can't be loaded
+    @Test
+    public void testNotXMLLoadNode() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadNode("src/test/java/testResources/notXML.xml");
+        });
+    }
+
+    @Test
+    public void testNotXMLLoadSegment() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadSegment("src/test/java/testResources/notXML.xml");
+        });
+    }
+
+    @Test
+    public void testNotXMLLoadDeliveryRequest() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadDeliveryRequest("src/test/java/testResources/notXML.xml");
+        });
+    }
+
+    // Those tests make sure that a non existing file can't be loaded
+    @Test
+    public void testNonExistingFileLoadNode() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadNode("src/test/java/testResources/nonExistingFile.xml");
+        });
+    }
+
+    @Test
+    public void testNonExistingFileLoadSegment() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadSegment("src/test/java/testResources/nonExistingFile.xml");
+        });
+    }
+
+    @Test
+    public void testNonExistingFileLoadDeliveryRequest() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadDeliveryRequest("src/test/java/testResources/nonExistingFile.xml");
+        });
+    }
+
+    // Those tests make sure that the error handling of wrong tags is correct
+    @Test
+    public void testWrongReseauTagLoadNode() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadNode("src/test/java/testResources/wrongReseauTagXML.xml");
+        });
+        String expectedMessage = "No 'reseau' tag found in the XML file";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testWrongNoeudTagLoadNode() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadNode("src/test/java/testResources/wrongNoeudTagXML.xml");
+        });
+        String expectedMessage = "No 'noeud' tag found in the XML file";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testWrongReseauTagLoadSegment() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadSegment("src/test/java/testResources/wrongReseauTagXML.xml");
+        });
+        String expectedMessage = "No 'reseau' tag found in the XML file";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testWrongTronconTagLoadSegment() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadSegment("src/test/java/testResources/wrongTronconTagXML.xml");
+        });
+        String expectedMessage = "No 'troncon' tag found in the XML file";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testWrongEntrepotTagLoadDeliveryRequest() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadDeliveryRequest("src/test/java/testResources/wrongEntrepotTagXML.xml");
+        });
+        String expectedMessage = "No warehouse found in the first line of the XML file";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testWrongLivraisonTagLoadDeliveryRequest() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadDeliveryRequest("src/test/java/testResources/wrongLivraisonTagXML.xml");
+        });
+        String expectedMessage = "No delivery request found in the XML file";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testWrongDemandeTagLoadDeliveryRequest() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            optimodService.loadDeliveryRequest("src/test/java/testResources/wrongDemandeTagXML.xml");
+        });
+        String expectedMessage = "No 'demandeDeLivraisons' tag found in the XML file";
+        String actualMessage = exception.getMessage();
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    // Those tests make sure that the error handling of wrong attributes is correct
 }
 
