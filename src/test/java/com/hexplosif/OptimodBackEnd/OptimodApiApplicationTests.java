@@ -9,17 +9,18 @@ class OptimodApiApplicationTests {
     @Test
     void contextLoads() {
     }
-
-
-
 }
 
 
 /*
 
-If you want to execute multiple test classes in one go, it’s generally not typical to import test methods directly. Instead, you can create an overall suite of tests using @RunWith (in JUnit 4) or @TestInstance in JUnit 5, or use @Import for configuration.
+If you want to execute multiple test classes in one go, it’s generally not typical to import
+test methods directly. Instead, you can create an overall suite of tests using @RunWith (in JUnit 4)
+or @TestInstance in JUnit 5, or use @Import for configuration.
 
-If you want multiple test classes to run as part of one larger test suite, you can use the @Suite or JUnit's parameterized tests. Here’s an example of a suite in JUnit 5 using @TestInstance or @TestMethodOrder.
+If you want multiple test classes to run as part of one larger test suite, you can use the @Suite
+or JUnit's parameterized tests. Here’s an example of a suite in JUnit 5 using @TestInstance or
+@TestMethodOrder.
 
 NODE CONTROLLER
 createNode
