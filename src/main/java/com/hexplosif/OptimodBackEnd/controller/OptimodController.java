@@ -408,6 +408,25 @@ public class OptimodController {
         optimodService.deleteCourierById(id);
     }
 
+    /**
+     * Assign a courier to a delivery request
+     * @param body A map containing the courier id and the delivery request id
+     * @return The DeliveryRequest object updated
+     */
+    @PutMapping("/assignCourier")
+    public DeliveryRequest assignCourier(@RequestBody Map<String, Long> body) {
+        Long idCourier = body.get("courierId");
+        Long idDeliveryRequest = body.get("deliveryRequestId");
+        System.out.println("Assigning courier " + idCourier + " to delivery request " + idDeliveryRequest);
+        return optimodService.assignCourier(idCourier, idDeliveryRequest);
+    }
+
+    /**
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     */
     private String saveUploadedFile(MultipartFile file) throws IOException {
         String tempFileName = System.getProperty("java.io.tmpdir") + file.getOriginalFilename();
         file.transferTo(new java.io.File(tempFileName));

@@ -25,6 +25,6 @@ public class DeliveryRequest {
     @Column(name = "warehouse")
     private Long idWarehouse;
 
-    @Column(name = "courrier")
-    private Long idCourrier;
+    @Column(name = "courier")
+    private Long idCourier;
 }

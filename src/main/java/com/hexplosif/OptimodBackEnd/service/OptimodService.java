@@ -485,4 +485,22 @@ public class OptimodService {
     public void deleteAllCouriers() {
         courierRepository.deleteAll();
     }
+
+    /**
+     * Assign a courier to a delivery request
+     * @param idCourier The id of the courier
+     * @param idDeliveryRequest The id of the delivery request
+     * @return The delivery request
+     */
+    public DeliveryRequest assignCourier(Long idCourier, Long idDeliveryRequest) {
+        Optional<Courier> courier = courierRepository.findById(idCourier);
+        Optional<DeliveryRequest> deliveryRequest = deliveryRequestRepository.findById(idDeliveryRequest);
+
+        if (courier.isPresent() && deliveryRequest.isPresent()) {
+            deliveryRequest.get().setIdCourier(idCourier);
+            deliveryRequestRepository.save(deliveryRequest.get());
+        }
+
+        return deliveryRequest.get();
+    }
 }
