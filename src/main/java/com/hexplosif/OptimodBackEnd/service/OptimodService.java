@@ -1,8 +1,10 @@
 package com.hexplosif.OptimodBackEnd.service;
 
+import com.hexplosif.OptimodBackEnd.model.Courier;
 import com.hexplosif.OptimodBackEnd.model.DeliveryRequest;
 import com.hexplosif.OptimodBackEnd.model.Node;
 import com.hexplosif.OptimodBackEnd.model.Segment;
+import com.hexplosif.OptimodBackEnd.repository.CourierRepository;
 import com.hexplosif.OptimodBackEnd.repository.DeliveryRequestRepository;
 import com.hexplosif.OptimodBackEnd.repository.NodeRepository;
 import com.hexplosif.OptimodBackEnd.repository.SegmentRepository;
@@ -31,6 +33,9 @@ public class OptimodService {
 
     @Autowired
     private DeliveryRequestRepository deliveryRequestRepository;
+
+    @Autowired
+    private CourierRepository courierRepository;
 
     /**
      * Parse the XML file
@@ -376,6 +381,7 @@ public class OptimodService {
         segmentRepository.saveAll(segments);
         return segments;
     }
+
     /**
      * Get a delivery request by its id
      *
@@ -404,21 +410,21 @@ public class OptimodService {
 
     /**
      * Save a delivery request
-     * @param deliveryrequest The delivery request to save
+     * @param delivery_request The delivery request to save
      * @return The saved delivery request
      */
-    public DeliveryRequest saveDeliveryRequest(DeliveryRequest deliveryrequest) {
+    public DeliveryRequest saveDeliveryRequest(DeliveryRequest delivery_request) {
         DeliveryRequest savedDeliveryRequest;
-        savedDeliveryRequest = deliveryRequestRepository.save(deliveryrequest);
+        savedDeliveryRequest = deliveryRequestRepository.save(delivery_request);
         return savedDeliveryRequest;
     }
 
     /**
      * Create a delivery request
-     * @param deliveryrequest The delivery request to create
+     * @param delivery_request The delivery request to create
      */
-    public void createDeliveryRequest(DeliveryRequest deliveryrequest) {
-        deliveryRequestRepository.save(deliveryrequest);
+    public void createDeliveryRequest(DeliveryRequest delivery_request) {
+        deliveryRequestRepository.save(delivery_request);
     }
 
     /**
@@ -426,5 +432,57 @@ public class OptimodService {
      */
     public void deleteAllDeliveryRequests() {
         deliveryRequestRepository.deleteAll();
+    }
+
+    /**
+     * Get a courier by its id
+     *
+     * @param id The id of the courier
+     * @return The courier
+     */
+    public Optional<Courier> findCourierById(Long id) {
+        return courierRepository.findById(id);
+    }
+
+    /**
+     * Get all couriers
+     * @return The list of couriers
+     */
+    public Iterable<Courier> findAllCouriers() {
+        return courierRepository.findAll();
+    }
+
+    /**
+     * Delete a courier by its id
+     * @param id The id of the courier
+     */
+    public void deleteCourierById(Long id) {
+        courierRepository.deleteById(id);
+    }
+
+    /**
+     * Save a courier
+     * @param delivery_request The courier to save
+     * @return The saved courier
+     */
+    public Courier saveCourier(Courier delivery_request) {
+        Courier savedCourier;
+        savedCourier = courierRepository.save(delivery_request);
+        return savedCourier;
+    }
+
+    /**
+     * Create a courier
+     * @param delivery_request The courier to create
+     */
+    public void createCourier(Courier delivery_request) {
+        courierRepository.save(delivery_request);
+    }
+
+    /**
+     * Delete all couriers
+     */
+    public void deleteAllCouriers() {
+        courierRepository.deleteAll();
     }
 }
