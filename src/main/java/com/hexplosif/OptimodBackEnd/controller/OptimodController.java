@@ -77,10 +77,6 @@ public class OptimodController {
         }
     }
 
-
-
-
-
     /**
      * Create - Add a new node
      * @param node An object node
@@ -432,7 +428,16 @@ public class OptimodController {
     }
 
     /**
-     *
+     * Calculate the optimal route
+     * @return A list of node ids representing the optimal route
+     */
+    @GetMapping("/calculateOptimalRoute")
+    public List<Long> calculateOptimalRoute() throws Exception {
+        System.out.println("Calculating optimal route");
+        return optimodService.calculateOptimalRoute();
+    }
+
+    /**
      * @param file
      * @return
      * @throws IOException
