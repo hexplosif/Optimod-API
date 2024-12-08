@@ -1,6 +1,5 @@
 package com.hexplosif.OptimodBackEnd.service;
 
-import ch.qos.logback.core.joran.sanity.Pair;
 import com.hexplosif.OptimodBackEnd.model.*;
 import com.hexplosif.OptimodBackEnd.repository.CourierRepository;
 import com.hexplosif.OptimodBackEnd.repository.DeliveryRequestRepository;
@@ -12,19 +11,17 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Data
 @Service
-public class OptimodService {
-
+public class poubelle {
+/*
     @Autowired
     private NodeRepository nodeRepository;
 
@@ -41,7 +38,7 @@ public class OptimodService {
      * Parse the XML file
      * @param file The XML file
      * @return The document
-     */
+
     private Document parseXMLFile(File file) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -53,7 +50,7 @@ public class OptimodService {
     /**
      * Load the nodes from the XML file
      * @param XMLFileName The XML file
-     */
+
     public void loadNode(String XMLFileName) throws Exception{
 
         try {
@@ -121,7 +118,7 @@ public class OptimodService {
     /**
      * Load the segments from the XML file
      * @param XMLFileName The XML file
-     */
+
     public void loadSegment(String XMLFileName) throws Exception {
 
         try {
@@ -191,7 +188,7 @@ public class OptimodService {
     /**
      * Load the delivery request from the XML file
      * @param XMLDeliveryRequest The XML delivery request file
-     */
+
 
     public void loadDeliveryRequest(String XMLDeliveryRequest) throws Exception {
 
@@ -261,7 +258,7 @@ public class OptimodService {
      *
      * @param id The id of the node
      * @return The node
-     */
+
     public Optional<Node> findNodeById(Long id) {
         return nodeRepository.findById(id);
     }
@@ -269,7 +266,7 @@ public class OptimodService {
     /**
      * Get all nodes
      * @return The list of nodes
-     */
+
     public Iterable<Node> findAllNodes() {
         return nodeRepository.findAll();
     }
@@ -277,7 +274,7 @@ public class OptimodService {
     /**
      * Delete a node by its id
      * @param id The id of the node
-     */
+
     public void deleteNodeById(Long id) {
         nodeRepository.deleteById(id);
     }
@@ -286,7 +283,7 @@ public class OptimodService {
      * Save a node
      * @param node The node to save
      * @return The saved node
-     */
+
     public Node saveNode(Node node) {
         Node savedNode;
         savedNode = nodeRepository.save(node);
@@ -296,14 +293,14 @@ public class OptimodService {
     /**
      * Create a node
      * @param node The node to create
-     */
+
     public void createNode(Node node) {
         nodeRepository.save(node);
     }
 
     /**
      * Delete all nodes
-     */
+
     public void deleteAllNodes() {
         nodeRepository.deleteAll();
     }
@@ -313,7 +310,7 @@ public class OptimodService {
      *
      * @param nodes The list of nodes to create
      * @return The list of nodes created
-     */
+
     public Iterable<Node> createNodes(Iterable<Node> nodes) {
         nodeRepository.saveAll(nodes);
         return nodes;
@@ -324,7 +321,7 @@ public class OptimodService {
      *
      * @param id The id of the segment
      * @return The segment
-     */
+
     public Optional<Segment> findSegmentById(Long id) {
         return segmentRepository.findById(id);
     }
@@ -332,7 +329,7 @@ public class OptimodService {
     /**
      * Get all segments
      * @return The list of segments
-     */
+
     public Iterable<Segment> findAllSegments() {
         return segmentRepository.findAll();
     }
@@ -340,7 +337,7 @@ public class OptimodService {
     /**
      * Delete a segment by its id
      * @param id The id of the segment
-     */
+
     public void deleteSegmentById(Long id) {
         segmentRepository.deleteById(id);
     }
@@ -349,7 +346,7 @@ public class OptimodService {
      * Save a segment
      * @param segment The segment to save
      * @return The saved segment
-     */
+
     public Segment saveSegment(Segment segment) {
         Segment savedSegment;
         savedSegment = segmentRepository.save(segment);
@@ -359,14 +356,14 @@ public class OptimodService {
     /**
      * Create a segment
      * @param segment The segment to create
-     */
+
     public void createSegment(Segment segment) {
         segmentRepository.save(segment);
     }
 
     /**
      * Delete all segments
-     */
+
     public void deleteAllSegments() {
         segmentRepository.deleteAll();
     }
@@ -376,7 +373,7 @@ public class OptimodService {
      *
      * @param segments The list of segments to create
      * @return The list of segments created
-     */
+
     public Iterable<Segment> createSegments(Iterable<Segment> segments) {
         segmentRepository.saveAll(segments);
         return segments;
@@ -387,7 +384,7 @@ public class OptimodService {
      *
      * @param id The id of the delivery request
      * @return The delivery request
-     */
+
     public Optional<DeliveryRequest> findDeliveryRequestById(Long id) {
         return deliveryRequestRepository.findById(id);
     }
@@ -395,7 +392,7 @@ public class OptimodService {
     /**
      * Get all delivery requests
      * @return The list of delivery requests
-     */
+
     public Iterable<DeliveryRequest> findAllDeliveryRequests() {
         return deliveryRequestRepository.findAll();
     }
@@ -403,7 +400,7 @@ public class OptimodService {
     /**
      * Delete a delivery request by its id
      * @param id The id of the delivery request
-     */
+
     public void deleteDeliveryRequestById(Long id) {
         deliveryRequestRepository.deleteById(id);
     }
@@ -412,7 +409,7 @@ public class OptimodService {
      * Save a delivery request
      * @param delivery_request The delivery request to save
      * @return The saved delivery request
-     */
+
     public DeliveryRequest saveDeliveryRequest(DeliveryRequest delivery_request) {
         DeliveryRequest savedDeliveryRequest;
         savedDeliveryRequest = deliveryRequestRepository.save(delivery_request);
@@ -422,14 +419,14 @@ public class OptimodService {
     /**
      * Create a delivery request
      * @param delivery_request The delivery request to create
-     */
+
     public void createDeliveryRequest(DeliveryRequest delivery_request) {
         deliveryRequestRepository.save(delivery_request);
     }
 
     /**
      * Delete all delivery requests
-     */
+
     public void deleteAllDeliveryRequests() {
         deliveryRequestRepository.deleteAll();
     }
@@ -439,7 +436,7 @@ public class OptimodService {
      *
      * @param id The id of the courier
      * @return The courier
-     */
+
     public Optional<Courier> findCourierById(Long id) {
         return courierRepository.findById(id);
     }
@@ -447,7 +444,7 @@ public class OptimodService {
     /**
      * Get all couriers
      * @return The list of couriers
-     */
+
     public Iterable<Courier> findAllCouriers() {
         return courierRepository.findAll();
     }
@@ -455,7 +452,7 @@ public class OptimodService {
     /**
      * Delete a courier by its id
      * @param id The id of the courier
-     */
+
     public void deleteCourierById(Long id) {
         courierRepository.deleteById(id);
     }
@@ -464,7 +461,7 @@ public class OptimodService {
      * Save a courier
      * @param delivery_request The courier to save
      * @return The saved courier
-     */
+
     public Courier saveCourier(Courier delivery_request) {
         Courier savedCourier;
         savedCourier = courierRepository.save(delivery_request);
@@ -474,14 +471,14 @@ public class OptimodService {
     /**
      * Create a courier
      * @param delivery_request The courier to create
-     */
+
     public void createCourier(Courier delivery_request) {
         courierRepository.save(delivery_request);
     }
 
     /**
      * Delete all couriers
-     */
+
     public void deleteAllCouriers() {
         courierRepository.deleteAll();
     }
@@ -491,7 +488,7 @@ public class OptimodService {
      * @param idCourier The id of the courier
      * @param idDeliveryRequest The id of the delivery request
      * @return The delivery request
-     */
+
     public DeliveryRequest assignCourier(Long idCourier, Long idDeliveryRequest) {
         Optional<Courier> courier = courierRepository.findById(idCourier);
         Optional<DeliveryRequest> deliveryRequest = deliveryRequestRepository.findById(idDeliveryRequest);
@@ -504,152 +501,27 @@ public class OptimodService {
         return deliveryRequest.get();
     }
 
+    @Autowired
+    private DijkstraService dijkstraService;
 
-    public List<Long> calculateOptimalRoute() throws Exception {
-        // Fetch all delivery requests
+    /**
+     * Calculate the optimal route
+
+
+/*
+    public void calculateOptimalRoute() {
+        Long warehouseId = 25610888L; // Example warehouse ID
         List<DeliveryRequest> deliveryRequests = (List<DeliveryRequest>) deliveryRequestRepository.findAll();
 
-        // Build the graph
-        Map<Long, Map<Long, Double>> graph = buildGraph();
-
-        // Validate the graph contains all necessary nodes
-        validateGraph(graph, deliveryRequests);
-
-        // Calculate the optimal route
-        List<Long> route = findOptimalRoute(graph, deliveryRequests);
-
-        return route;
+        List<Long> optimalRoute = dijkstraService.findOptimalRoute(warehouseId, deliveryRequests);
+        System.out.println("Optimal Route: " + optimalRoute);
     }
 
-    private Map<Long, Map<Long, Double>> buildGraph() {
-        Map<Long, Map<Long, Double>> graph = new HashMap<>();
+    public List<Long> calculateOptimalRoute() {
+        Long warehouseId = 2835339774L; // Replace with actual logic to fetch warehouse ID
+        List<DeliveryRequest> deliveryRequests = (List<DeliveryRequest>) deliveryRequestRepository.findAll();
 
-        List<Segment> segments = (List<Segment>) segmentRepository.findAll();
-        for (Segment segment : segments) {
-            graph.putIfAbsent(segment.getIdOrigin(), new HashMap<>());
-            graph.get(segment.getIdOrigin()).put(segment.getIdDestination(), segment.getLength());
-        }
-
-        return graph;
+        return dijkstraService.findOptimalRoute(warehouseId, deliveryRequests);
     }
-
-    private void validateGraph(Map<Long, Map<Long, Double>> graph, List<DeliveryRequest> deliveryRequests) {
-        for (DeliveryRequest request : deliveryRequests) {
-            if (!graph.containsKey(request.getIdPickup()) || !graph.containsKey(request.getIdDelivery())) {
-                throw new IllegalStateException("Graph does not contain nodes for delivery request: " + request);
-            }
-        }
-    }
-
-    private List<Long> findOptimalRoute(Map<Long, Map<Long, Double>> graph, List<DeliveryRequest> deliveryRequests) {
-        List<Long> fullRoute = new ArrayList<>();
-        Long warehouseId = deliveryRequests.get(0).getIdWarehouse();
-
-        // Start from the warehouse
-        fullRoute.add(warehouseId);
-
-        Set<Long> visited = new HashSet<>();
-        List<DeliveryRequest> pendingRequests = new ArrayList<>(deliveryRequests);
-
-        while (!pendingRequests.isEmpty()) {
-            Long current = fullRoute.get(fullRoute.size() - 1); // Get the last node in the route
-            Double shortestDistance = Double.MAX_VALUE;
-            List<Long> shortestPath = new ArrayList<>();
-
-            // Find the nearest unvisited pickup or delivery point
-            for (DeliveryRequest request : pendingRequests) {
-                if (!visited.contains(request.getIdPickup())) {
-                    computeShortestPath(graph, current);
-                    List<Long> path = getPath(current, request.getIdPickup());
-                    Double distance = distances.getOrDefault(request.getIdPickup(), Double.MAX_VALUE);
-
-                    if (distance < shortestDistance) {
-                        shortestDistance = distance;
-                        shortestPath = path;
-                    }
-                }
-            }
-
-            if (shortestPath.isEmpty()) {
-                throw new IllegalStateException("No path found to complete the route.");
-            }
-
-            // Add the full path to the route
-            fullRoute.addAll(shortestPath.subList(1, shortestPath.size())); // Skip the first node as it's already in the route
-            visited.add(fullRoute.get(fullRoute.size() - 1)); // Mark the last node as visited
-
-            // Add the corresponding delivery point
-            DeliveryRequest completedRequest = null;
-            for (DeliveryRequest request : pendingRequests) {
-                if (request.getIdPickup().equals(fullRoute.get(fullRoute.size() - 1))) {
-                    computeShortestPath(graph, fullRoute.get(fullRoute.size() - 1));
-                    List<Long> deliveryPath = getPath(fullRoute.get(fullRoute.size() - 1), request.getIdDelivery());
-                    fullRoute.addAll(deliveryPath.subList(1, deliveryPath.size()));
-                    visited.add(fullRoute.get(fullRoute.size() - 1)); // Mark delivery node as visited
-                    completedRequest = request;
-                    break;
-                }
-            }
-
-            if (completedRequest != null) {
-                pendingRequests.remove(completedRequest);
-            }
-        }
-
-        // Return to the warehouse
-        computeShortestPath(graph, fullRoute.get(fullRoute.size() - 1));
-        List<Long> returnPath = getPath(fullRoute.get(fullRoute.size() - 1), warehouseId);
-        fullRoute.addAll(returnPath.subList(1, returnPath.size()));
-
-        System.out.println("Final Route with Paths: " + fullRoute); // Debug
-        return fullRoute;
-    }
-
-
-
-    private Map<Long, Double> distances;
-    private Map<Long, Long> predecessors;
-
-    private void computeShortestPath(Map<Long, Map<Long, Double>> graph, Long start) {
-        distances = new HashMap<>();
-        predecessors = new HashMap<>();
-
-        PriorityQueue<Long> pq = new PriorityQueue<>(Comparator.comparingDouble(node -> distances.getOrDefault(node, Double.MAX_VALUE)));
-
-        distances.put(start, 0.0);
-        pq.add(start);
-
-        while (!pq.isEmpty()) {
-            Long current = pq.poll();
-
-            Map<Long, Double> neighbors = graph.getOrDefault(current, Collections.emptyMap());
-            for (Map.Entry<Long, Double> entry : neighbors.entrySet()) {
-                Long neighbor = entry.getKey();
-                Double newDist = distances.get(current) + entry.getValue();
-
-                if (newDist < distances.getOrDefault(neighbor, Double.MAX_VALUE)) {
-                    distances.put(neighbor, newDist);
-                    predecessors.put(neighbor, current);
-                    pq.add(neighbor);
-                }
-            }
-        }
-    }
-
-    private List<Long> getPath(Long start, Long end) {
-        List<Long> path = new ArrayList<>();
-        if (!distances.containsKey(end)) return path; // No path exists
-
-        Long current = end;
-        while (current != null) {
-            path.add(0, current);
-            current = predecessors.get(current);
-        }
-        return path;
-    }
-
-
-
-
-
+*/
 }

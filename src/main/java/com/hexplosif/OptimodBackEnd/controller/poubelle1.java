@@ -1,24 +1,10 @@
 package com.hexplosif.OptimodBackEnd.controller;
 
-import com.hexplosif.OptimodBackEnd.model.Courier;
-import com.hexplosif.OptimodBackEnd.model.DeliveryRequest;
-import com.hexplosif.OptimodBackEnd.model.Node;
-import com.hexplosif.OptimodBackEnd.model.Segment;
-import com.hexplosif.OptimodBackEnd.service.OptimodService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
-public class OptimodController {
-
+public class poubelle1 {
+/*
     @Autowired
     private OptimodService optimodService;
 
@@ -52,26 +38,23 @@ public class OptimodController {
 
     @PostMapping("/loadDeliveryRequest")
     public ResponseEntity<Map<String, Object>> loadDeliveryRequest(@RequestParam("file") MultipartFile file) {
+        System.out.println("loadDeliveryRequest endpoint triggered");
+
         try {
-            // Save the uploaded file to a temporary location
             String XMLFileName = saveUploadedFile(file);
-
-            // Load delivery requests into the database
             optimodService.loadDeliveryRequest(XMLFileName);
-
-            // Calculate the optimal route
             List<Long> optimalRoute = optimodService.calculateOptimalRoute();
 
-            // Prepare response
             Map<String, Object> response = new HashMap<>();
             response.put("deliveryRequests", optimodService.findAllDeliveryRequests());
             response.put("optimalRoute", optimalRoute);
+            System.out.println("Optimal Route: " + optimalRoute);
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(Map.of(
-                    "error", "Erreur lors du chargement des demandes de livraison.",
+                    "error", "Error loading delivery requests or calculating the route.",
                     "details", e.getMessage()
             ));
         }
@@ -79,13 +62,11 @@ public class OptimodController {
 
 
 
-
-
     /**
      * Create - Add a new node
      * @param node An object node
      * @return The node object saved
-     */
+
     @PostMapping("/node")
     public Node createNode(@RequestBody Node node) {
         return optimodService.saveNode(node);
@@ -95,7 +76,7 @@ public class OptimodController {
      * Create - Add new nodes
      * @param nodes An iterable object of node
      * @return An Iterable object of Node object saved
-     */
+
     @PostMapping("/nodes")
     public Iterable<Node> createNodes(@RequestBody Iterable<Node> nodes) {
         return optimodService.createNodes(nodes);
@@ -105,7 +86,7 @@ public class OptimodController {
      * Read - Get one node
      * @param id The id of the node
      * @return A Node object fulfilled
-     */
+
     @GetMapping("/node/{id}")
     public Node getNode(@PathVariable("id") final Long id) {
         Optional<Node> node = optimodService.findNodeById(id);
@@ -119,7 +100,7 @@ public class OptimodController {
     /**
      * Read - Get all nodes
      * @return - An Iterable object of Node fulfilled
-     */
+
     @GetMapping("/nodes")
     public Iterable<Node> getNodes() {
         return optimodService.findAllNodes();
@@ -127,7 +108,7 @@ public class OptimodController {
 
     /**
      * Delete - Delete all nodes
-     */
+
     @DeleteMapping("/nodes")
     public void deleteNodes() {
         optimodService.deleteAllNodes();
@@ -138,7 +119,7 @@ public class OptimodController {
      * @param id - The id of the node to update
      * @param node - The node object updated
      * @return The Node object updated
-     */
+
     @PutMapping("/node/{id}")
     public Node updateNode(@PathVariable("id") final Long id, @RequestBody Node node) {
         Optional<Node> e = optimodService.findNodeById(id);
@@ -166,7 +147,7 @@ public class OptimodController {
     /**
      * Delete - Delete an node
      * @param id - The id of the node to delete
-     */
+
     @DeleteMapping("/node/{id}")
     public void deleteNode(@PathVariable("id") final Long id) {
         optimodService.deleteNodeById(id);
@@ -176,7 +157,7 @@ public class OptimodController {
      * Create - Add a new segment
      * @param segment An object segment
      * @return The segment object saved
-     */
+
     @PostMapping("/segment")
     public Segment createSegment(@RequestBody Segment segment) {
         return optimodService.saveSegment(segment);
@@ -186,7 +167,7 @@ public class OptimodController {
      * Create - Add new segments
      * @param segments An iterable object of segment
      * @return An Iterable object of Segment object saved
-     */
+
     @PostMapping("/segments")
     public Iterable<Segment> createSegments(@RequestBody Iterable<Segment> segments) {
         return optimodService.createSegments(segments);
@@ -196,7 +177,7 @@ public class OptimodController {
      * Read - Get one segment
      * @param id The id of the segment
      * @return A Segment object fulfilled
-     */
+
     @GetMapping("/segment/{id}")
     public Segment getSegment(@PathVariable("id") final Long id) {
         Optional<Segment> segment = optimodService.findSegmentById(id);
@@ -210,7 +191,7 @@ public class OptimodController {
     /**
      * Read - Get all segments
      * @return - An Iterable object of Segment fulfilled
-     */
+
     @GetMapping("/segments")
     public Iterable<Segment> getSegments() {
         return optimodService.findAllSegments();
@@ -218,7 +199,7 @@ public class OptimodController {
 
     /**
      * Delete - Delete all segments
-     */
+
     @DeleteMapping("/segments")
     public void deleteSegments() {
         optimodService.deleteAllSegments();
@@ -229,7 +210,7 @@ public class OptimodController {
      * @param id - The id of the segment to update
      * @param segment - The segment object updated
      * @return The Segment object updated
-     */
+
     @PutMapping("/segment/{id}")
     public Segment updateSegment(@PathVariable("id") final Long id, @RequestBody Segment segment) {
         Optional<Segment> e = optimodService.findSegmentById(id);
@@ -266,7 +247,7 @@ public class OptimodController {
     /**
      * Delete - Delete an segment
      * @param id - The id of the segment to delete
-     */
+
     @DeleteMapping("/segment/{id}")
     public void deleteSegment(@PathVariable("id") final Long id) {
         optimodService.deleteSegmentById(id);
@@ -276,7 +257,7 @@ public class OptimodController {
      * Create - Add a new delivery_request
      * @param delivery_request An object delivery_request
      * @return The delivery_request object saved
-     */
+
     @PostMapping("/delivery_request")
     public DeliveryRequest createDeliveryRequest(@RequestBody DeliveryRequest delivery_request) {
         return optimodService.saveDeliveryRequest(delivery_request);
@@ -286,7 +267,7 @@ public class OptimodController {
      * Read - Get one delivery_request
      * @param id The id of the delivery_request
      * @return An DeliveryRequest object fulfilled
-     */
+
     @GetMapping("/delivery_request/{id}")
     public DeliveryRequest getDeliveryRequest(@PathVariable("id") final Long id) {
         Optional<DeliveryRequest> delivery_request = optimodService.findDeliveryRequestById(id);
@@ -300,7 +281,7 @@ public class OptimodController {
     /**
      * Read - Get all delivery_requests
      * @return - An Iterable object of DeliveryRequest fulfilled
-     */
+
     @GetMapping("/delivery_requests")
     public Iterable<DeliveryRequest> getDeliveryRequests() {
         return optimodService.findAllDeliveryRequests();
@@ -308,7 +289,7 @@ public class OptimodController {
 
     /**
      * Delete - Delete all delivery_requests
-     */
+
     @DeleteMapping("/delivery_requests")
     public void deleteDeliveryRequests() {
         optimodService.deleteAllDeliveryRequests();
@@ -319,7 +300,7 @@ public class OptimodController {
      * @param id - The id of the delivery_request to update
      * @param delivery_request - The delivery_request object updated
      * @return The DeliveryRequest object updated
-     */
+
     @PutMapping("/delivery_request/{id}")
     public DeliveryRequest updateDeliveryRequest(@PathVariable("id") final Long id, @RequestBody DeliveryRequest delivery_request) {
         Optional<DeliveryRequest> e = optimodService.findDeliveryRequestById(id);
@@ -331,6 +312,8 @@ public class OptimodController {
             currentDeliveryRequest.setIdWarehouse(delivery_request.getIdWarehouse());
 
             optimodService.saveDeliveryRequest(currentDeliveryRequest);
+
+            optimodService.calculateOptimalRoute();
             return currentDeliveryRequest;
         } else {
             return null;
@@ -340,17 +323,18 @@ public class OptimodController {
     /**
      * Delete - Delete an delivery_request
      * @param id - The id of the delivery_request to delete
-     */
+
     @DeleteMapping("/delivery_request/{id}")
     public void deleteDeliveryRequest(@PathVariable("id") final Long id) {
         optimodService.deleteDeliveryRequestById(id);
+        optimodService.calculateOptimalRoute();
     }
 
     /**
      * Create - Add a new courier
      * @param courier An object courier
      * @return The courier object saved
-     */
+
     @PostMapping("/courier")
     public Courier createCourier(@RequestBody Courier courier) {
         return optimodService.saveCourier(courier);
@@ -360,7 +344,7 @@ public class OptimodController {
      * Read - Get one courier
      * @param id The id of the courier
      * @return An Courier object fulfilled
-     */
+
     @GetMapping("/courier/{id}")
     public Courier getCourier(@PathVariable("id") final Long id) {
         Optional<Courier> courier = optimodService.findCourierById(id);
@@ -374,7 +358,7 @@ public class OptimodController {
     /**
      * Read - Get all couriers
      * @return - An Iterable object of Courier fulfilled
-     */
+
     @GetMapping("/couriers")
     public Iterable<Courier> getCouriers() {
         return optimodService.findAllCouriers();
@@ -382,7 +366,7 @@ public class OptimodController {
 
     /**
      * Delete - Delete all couriers
-     */
+
     @DeleteMapping("/couriers")
     public void deleteCouriers() {
         optimodService.deleteAllCouriers();
@@ -393,7 +377,7 @@ public class OptimodController {
      * @param id - The id of the courier to update
      * @param courier - The courier object updated
      * @return The Courier object updated
-     */
+
     @PutMapping("/courier/{id}")
     public Courier updateCourier(@PathVariable("id") final Long id, @RequestBody Courier courier) {
         Optional<Courier> e = optimodService.findCourierById(id);
@@ -412,7 +396,7 @@ public class OptimodController {
     /**
      * Delete - Delete a courier
      * @param id - The id of the courier to delete
-     */
+
     @DeleteMapping("/courier/{id}")
     public void deleteCourier(@PathVariable("id") final Long id) {
         optimodService.deleteCourierById(id);
@@ -422,7 +406,7 @@ public class OptimodController {
      * Assign a courier to a delivery request
      * @param body A map containing the courier id and the delivery request id
      * @return The DeliveryRequest object updated
-     */
+
     @PutMapping("/assignCourier")
     public DeliveryRequest assignCourier(@RequestBody Map<String, Long> body) {
         Long idCourier = body.get("courierId");
@@ -436,10 +420,11 @@ public class OptimodController {
      * @param file
      * @return
      * @throws IOException
-     */
+
     private String saveUploadedFile(MultipartFile file) throws IOException {
         String tempFileName = System.getProperty("java.io.tmpdir") + file.getOriginalFilename();
         file.transferTo(new java.io.File(tempFileName));
         return tempFileName;
     }
+*/
 }
