@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -69,7 +71,7 @@ public class OptimodServiceTest {
         optimodService.loadDeliveryRequest("src/test/java/data/demandePetit1.xml");
 
         // Verify that delivery requests are loaded correctly
-        Optional<DeliveryRequest> deliveryRequest = optimodService.findDeliveryRequestById(1L);
+        Optional<DeliveryRequest> deliveryRequest = optimodService.findDeliveryRequestById(2L);
         assertTrue("The delivery request doesn't exist", deliveryRequest.isPresent());
         assertEquals("The delivery request warehouse is incorrect",342873658L, deliveryRequest.get().getIdWarehouse());
         assertEquals("The delivery request pickup address is incorrect",208769039L, deliveryRequest.get().getIdPickup());
@@ -280,6 +282,34 @@ public class OptimodServiceTest {
         String expectedMessage = "No delivery address found for the delivery request : ";
         String actualMessage = exception.getMessage();
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    // Those tests make sure that TSP functions are working correctly
+    @Test
+    public void testValidateGraph() throws Exception {
+        optimodService.loadSegment("src/test/java/data/petitPlanTest.xml");
+        optimodService.loadDeliveryRequest("src/test/java/data/demandePetit1.xml");
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            List<Long> route = optimodService.calculateOptimalRoute();
+        });
+        String expectedMessage = "Graph does not contain nodes for delivery request: ";
+        String actualMessage = exception.getMessage();
+        System.out.println(actualMessage);
+        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testCalculateOptimalRoute() throws Exception {
+        optimodService.loadNode("src/test/java/data/petitPlanTest.xml");
+        optimodService.loadSegment("src/test/java/data/petitPlanTest.xml");
+        optimodService.loadDeliveryRequest("src/test/java/data/demandePetit1Test.xml");
+
+        List<Long> route = optimodService.calculateOptimalRoute();
+
+        assertTrue("The route is incorrect", route.get(0) == 25175791L);
+        assertTrue("The route is incorrect", route.get(1) == 2129259178L);
+        assertTrue("The route is incorrect", route.get(2) == 26086130L);
     }
 }
 
