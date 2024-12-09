@@ -13,6 +13,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import java.util.*;
+import java.util.stream.Collectors;
+
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -505,20 +507,33 @@ public class OptimodService {
     }
 
 
-    public List<Long> calculateOptimalRoute() throws Exception {
+
+    private Map<Long, Double> distances;
+    private Map<Long, Long> predecessors;
+
+
+
+    /**
+     * Calculate the optimal route.
+     * @return The list of node IDs representing the optimal route.
+     * @throws Exception If a route cannot be calculated.
+     */
+    public List<Long> calculateOptimalRoute() {
         // Fetch all delivery requests
         List<DeliveryRequest> deliveryRequests = (List<DeliveryRequest>) deliveryRequestRepository.findAll();
 
-        // Build the graph
+        if (deliveryRequests.isEmpty()) {
+            throw new IllegalStateException("No delivery requests found.");
+        }
+
+        // Build the graph from segments
         Map<Long, Map<Long, Double>> graph = buildGraph();
 
         // Validate the graph contains all necessary nodes
         validateGraph(graph, deliveryRequests);
 
         // Calculate the optimal route
-        List<Long> route = findOptimalRoute(graph, deliveryRequests);
-
-        return route;
+        return findOptimalRoute(graph, deliveryRequests);
     }
 
     private Map<Long, Map<Long, Double>> buildGraph() {
@@ -542,85 +557,87 @@ public class OptimodService {
     }
 
     private List<Long> findOptimalRoute(Map<Long, Map<Long, Double>> graph, List<DeliveryRequest> deliveryRequests) {
-        List<Long> fullRoute = new ArrayList<>();
+        List<Long> route = new ArrayList<>();
         Long warehouseId = deliveryRequests.get(0).getIdWarehouse();
+        route.add(warehouseId); // Start at the warehouse
 
-        // Start from the warehouse
-        fullRoute.add(warehouseId);
+        Set<Long> visitedPickups = new HashSet<>();
+        Set<Long> visitedDeliveries = new HashSet<>();
 
-        Set<Long> visited = new HashSet<>();
-        List<DeliveryRequest> pendingRequests = new ArrayList<>(deliveryRequests);
+        PriorityQueue<Long> toVisit = new PriorityQueue<>(Comparator.comparingDouble(node -> shortestDistance(graph, route.get(route.size() - 1), node)));
+        Map<Long, DeliveryRequest> deliveryMap = deliveryRequests.stream()
+                .collect(Collectors.toMap(DeliveryRequest::getIdPickup, request -> request));
 
-        while (!pendingRequests.isEmpty()) {
-            Long current = fullRoute.get(fullRoute.size() - 1); // Get the last node in the route
-            Double shortestDistance = Double.MAX_VALUE;
-            List<Long> shortestPath = new ArrayList<>();
+        // Add initial pickups to visit
+        toVisit.addAll(deliveryRequests.stream().map(DeliveryRequest::getIdPickup).toList());
 
-            // Find the nearest unvisited pickup or delivery point
-            for (DeliveryRequest request : pendingRequests) {
-                if (!visited.contains(request.getIdPickup())) {
-                    computeShortestPath(graph, current);
-                    List<Long> path = getPath(current, request.getIdPickup());
-                    Double distance = distances.getOrDefault(request.getIdPickup(), Double.MAX_VALUE);
+        while (!toVisit.isEmpty()) {
+            Long current = toVisit.poll();
 
-                    if (distance < shortestDistance) {
-                        shortestDistance = distance;
-                        shortestPath = path;
+            // Calculate the shortest path from the current node to the next target
+            List<Long> path = dijkstraPath(graph, route.get(route.size() - 1), current);
+
+            // Append the intermediate nodes to the route
+            path.remove(0); // Avoid duplicating the current node
+            route.addAll(path);
+
+            if (visitedPickups.contains(current)) {
+                // Visit the delivery corresponding to the current pickup
+                DeliveryRequest request = deliveryMap.get(current);
+                if (request == null) {
+                    throw new IllegalStateException("DeliveryRequest not found for pickup ID: " + current);
+                }
+
+                Long deliveryId = request.getIdDelivery();
+                if (!visitedDeliveries.contains(deliveryId)) {
+                    toVisit.add(deliveryId);
+                    visitedDeliveries.add(deliveryId);
+                }
+            } else {
+                // Visit the pickup
+                visitedPickups.add(current);
+
+                // Add the corresponding delivery to the queue
+                DeliveryRequest request = deliveryMap.get(current);
+                if (request != null) {
+                    Long deliveryId = request.getIdDelivery();
+                    if (!visitedDeliveries.contains(deliveryId)) {
+                        toVisit.add(deliveryId);
                     }
                 }
-            }
 
-            if (shortestPath.isEmpty()) {
-                throw new IllegalStateException("No path found to complete the route.");
-            }
-
-            // Add the full path to the route
-            fullRoute.addAll(shortestPath.subList(1, shortestPath.size())); // Skip the first node as it's already in the route
-            visited.add(fullRoute.get(fullRoute.size() - 1)); // Mark the last node as visited
-
-            // Add the corresponding delivery point
-            DeliveryRequest completedRequest = null;
-            for (DeliveryRequest request : pendingRequests) {
-                if (request.getIdPickup().equals(fullRoute.get(fullRoute.size() - 1))) {
-                    computeShortestPath(graph, fullRoute.get(fullRoute.size() - 1));
-                    List<Long> deliveryPath = getPath(fullRoute.get(fullRoute.size() - 1), request.getIdDelivery());
-                    fullRoute.addAll(deliveryPath.subList(1, deliveryPath.size()));
-                    visited.add(fullRoute.get(fullRoute.size() - 1)); // Mark delivery node as visited
-                    completedRequest = request;
-                    break;
+                // Add other pickups to the queue if not already visited
+                for (DeliveryRequest otherRequest : deliveryRequests) {
+                    if (!visitedPickups.contains(otherRequest.getIdPickup()) && !toVisit.contains(otherRequest.getIdPickup())) {
+                        toVisit.add(otherRequest.getIdPickup());
+                    }
                 }
-            }
-
-            if (completedRequest != null) {
-                pendingRequests.remove(completedRequest);
             }
         }
 
         // Return to the warehouse
-        computeShortestPath(graph, fullRoute.get(fullRoute.size() - 1));
-        List<Long> returnPath = getPath(fullRoute.get(fullRoute.size() - 1), warehouseId);
-        fullRoute.addAll(returnPath.subList(1, returnPath.size()));
+        List<Long> returnPath = dijkstraPath(graph, route.get(route.size() - 1), warehouseId);
+        returnPath.remove(0); // Avoid duplicating the current node
+        route.addAll(returnPath);
 
-        System.out.println("Final Route with Paths: " + fullRoute); // Debug
-        return fullRoute;
+        return route;
     }
 
+    private List<Long> dijkstraPath(Map<Long, Map<Long, Double>> graph, Long start, Long target) {
+        Map<Long, Double> distances = new HashMap<>();
+        Map<Long, Long> previousNodes = new HashMap<>();
+        PriorityQueue<Long> pq = new PriorityQueue<>(Comparator.comparingDouble(distances::get));
 
-
-    private Map<Long, Double> distances;
-    private Map<Long, Long> predecessors;
-
-    private void computeShortestPath(Map<Long, Map<Long, Double>> graph, Long start) {
-        distances = new HashMap<>();
-        predecessors = new HashMap<>();
-
-        PriorityQueue<Long> pq = new PriorityQueue<>(Comparator.comparingDouble(node -> distances.getOrDefault(node, Double.MAX_VALUE)));
-
+        for (Long node : graph.keySet()) {
+            distances.put(node, Double.MAX_VALUE);
+        }
         distances.put(start, 0.0);
         pq.add(start);
 
         while (!pq.isEmpty()) {
             Long current = pq.poll();
+
+            if (current.equals(target)) break;
 
             Map<Long, Double> neighbors = graph.getOrDefault(current, Collections.emptyMap());
             for (Map.Entry<Long, Double> entry : neighbors.entrySet()) {
@@ -629,24 +646,50 @@ public class OptimodService {
 
                 if (newDist < distances.getOrDefault(neighbor, Double.MAX_VALUE)) {
                     distances.put(neighbor, newDist);
-                    predecessors.put(neighbor, current);
+                    previousNodes.put(neighbor, current);
                     pq.add(neighbor);
                 }
             }
         }
-    }
 
-    private List<Long> getPath(Long start, Long end) {
+        // Backtrack to construct the path
         List<Long> path = new ArrayList<>();
-        if (!distances.containsKey(end)) return path; // No path exists
-
-        Long current = end;
-        while (current != null) {
-            path.add(0, current);
-            current = predecessors.get(current);
+        for (Long at = target; at != null; at = previousNodes.get(at)) {
+            path.add(0, at);
         }
+
         return path;
     }
+
+    private double shortestDistance(Map<Long, Map<Long, Double>> graph, Long start, Long end) {
+        if (!graph.containsKey(start) || !graph.containsKey(end)) return Double.MAX_VALUE;
+
+        Map<Long, Double> distances = new HashMap<>();
+        PriorityQueue<Long> pq = new PriorityQueue<>(Comparator.comparingDouble(distances::get));
+        distances.put(start, 0.0);
+
+        pq.add(start);
+
+        while (!pq.isEmpty()) {
+            Long current = pq.poll();
+
+            if (current.equals(end)) break;
+
+            Map<Long, Double> neighbors = graph.getOrDefault(current, Collections.emptyMap());
+            for (Map.Entry<Long, Double> entry : neighbors.entrySet()) {
+                Long neighbor = entry.getKey();
+                Double newDist = distances.getOrDefault(current, Double.MAX_VALUE) + entry.getValue();
+
+                if (newDist < distances.getOrDefault(neighbor, Double.MAX_VALUE)) {
+                    distances.put(neighbor, newDist);
+                    pq.add(neighbor);
+                }
+            }
+        }
+
+        return distances.getOrDefault(end, Double.MAX_VALUE);
+    }
+
 
 
 
