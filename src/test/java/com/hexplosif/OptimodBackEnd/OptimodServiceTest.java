@@ -6,9 +6,8 @@ import com.hexplosif.OptimodBackEnd.model.Segment;
 import com.hexplosif.OptimodBackEnd.service.OptimodService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
+/**
+ * Test class for OptimodService.
+ * This class contains unit tests for the OptimodService class.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 public class OptimodServiceTest {
@@ -31,99 +34,144 @@ public class OptimodServiceTest {
     @Autowired
     private OptimodService optimodService;
 
+    /**
+     * Sets up the test environment by cleaning up the database before and after each test.
+     */
     @BeforeEach
     @AfterEach
     public void setUp() {
-        // Clean up the database before and after each test
         optimodService.deleteAllNodes();
         optimodService.deleteAllSegments();
         optimodService.deleteAllDeliveryRequests();
     }
 
-    // Those tests make sure that the nodes, segments and delivery requests are loaded correctly
+    /**
+     * Tests that nodes are loaded correctly from an XML file.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("Load")
     public void testCorrectLoadNode() throws Exception {
         optimodService.loadNode("src/test/java/data/petitPlan.xml");
 
-        // Verify that nodes are loaded correctly
         Optional<Node> node = optimodService.findNodeById(25175791L);
         assertTrue("The node doesn't exist", node.isPresent());
-        assertEquals("The ID is incorrect",25175791L, node.get().getId());
-        assertEquals("The Latitude is incorrect",45.75406, node.get().getLatitude());
-        assertEquals("The Longitude is incorrect",4.857418, node.get().getLongitude());
+        assertEquals("The ID is incorrect", 25175791L, node.get().getId());
+        assertEquals("The Latitude is incorrect", 45.75406, node.get().getLatitude());
+        assertEquals("The Longitude is incorrect", 4.857418, node.get().getLongitude());
     }
 
+    /**
+     * Tests that segments are loaded correctly from an XML file.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("Load")
     public void testCorrectLoadSegment() throws Exception {
         optimodService.loadSegment("src/test/java/data/petitPlan.xml");
 
-        // Verify that segments are loaded correctly
         Optional<Segment> segment = optimodService.findSegmentById(1L);
         assertTrue("The segment doesn't exist", segment.isPresent());
-        assertEquals("The destination is incorrect",25175778L, segment.get().getIdDestination());
-        assertEquals("The longueur is incorrect",69.979805, segment.get().getLength());
-        assertEquals("The nomRue is incorrect","Rue Danton", segment.get().getName());
-        assertEquals("The origine is incorrect",25175791L, segment.get().getIdOrigin());
+        assertEquals("The destination is incorrect", 25175778L, segment.get().getIdDestination());
+        assertEquals("The longueur is incorrect", 69.979805, segment.get().getLength());
+        assertEquals("The nomRue is incorrect", "Rue Danton", segment.get().getName());
+        assertEquals("The origine is incorrect", 25175791L, segment.get().getIdOrigin());
     }
 
+    /**
+     * Tests that delivery requests are loaded correctly from an XML file.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("Load")
     public void testCorrectLoadDeliveryRequest() throws Exception {
         optimodService.loadDeliveryRequest("src/test/java/data/demandePetit1.xml");
 
-        // Verify that delivery requests are loaded correctly
         Optional<DeliveryRequest> deliveryRequest = optimodService.findDeliveryRequestById(2L);
         assertTrue("The delivery request doesn't exist", deliveryRequest.isPresent());
-        assertEquals("The delivery request warehouse is incorrect",342873658L, deliveryRequest.get().getIdWarehouse());
-        assertEquals("The delivery request pickup address is incorrect",208769039L, deliveryRequest.get().getIdPickup());
-        assertEquals("The delivery request delivery address is incorrect",25173820L, deliveryRequest.get().getIdDelivery());
+        assertEquals("The delivery request warehouse is incorrect", 342873658L, deliveryRequest.get().getIdWarehouse());
+        assertEquals("The delivery request pickup address is incorrect", 208769039L, deliveryRequest.get().getIdPickup());
+        assertEquals("The delivery request delivery address is incorrect", 25173820L, deliveryRequest.get().getIdDelivery());
     }
 
-    // Those tests make sure that a non XML file can't be loaded
+    /**
+     * Tests that a non-XML file cannot be loaded as a node.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("NotXML")
     public void testNotXMLLoadNode() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadNode("src/test/java/data/notXML.xml");
         });
     }
 
+    /**
+     * Tests that a non-XML file cannot be loaded as a segment.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("NotXML")
     public void testNotXMLLoadSegment() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadSegment("src/test/java/data/notXML.xml");
         });
     }
 
+    /**
+     * Tests that a non-XML file cannot be loaded as a delivery request.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("NotXML")
     public void testNotXMLLoadDeliveryRequest() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadDeliveryRequest("src/test/java/data/notXML.xml");
         });
     }
 
-    // Those tests make sure that a non existing file can't be loaded
+    /**
+     * Tests that a non-existing file cannot be loaded as a node.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("NonExisting")
     public void testNonExistingFileLoadNode() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadNode("src/test/java/data/nonExistingFile.xml");
         });
     }
 
+    /**
+     * Tests that a non-existing file cannot be loaded as a segment.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("NonExisting")
     public void testNonExistingFileLoadSegment() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadSegment("src/test/java/data/nonExistingFile.xml");
         });
     }
 
+    /**
+     * Tests that a non-existing file cannot be loaded as a delivery request.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("NonExisting")
     public void testNonExistingFileLoadDeliveryRequest() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadDeliveryRequest("src/test/java/data/nonExistingFile.xml");
         });
     }
 
-    // Those tests make sure that the error handling of wrong tags is correct
+    /**
+     * Tests that the error handling of wrong tags is correct for nodes.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongTag")
     public void testWrongReseauTagLoadNode() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadNode("src/test/java/data/wrongReseauTag.xml");
@@ -133,7 +181,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the error handling of wrong tags is correct for nodes.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongTag")
     public void testWrongNoeudTagLoadNode() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadNode("src/test/java/data/wrongNoeudTag.xml");
@@ -143,7 +196,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the error handling of wrong tags is correct for segments.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongTag")
     public void testWrongReseauTagLoadSegment() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadSegment("src/test/java/data/wrongReseauTag.xml");
@@ -153,7 +211,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the error handling of wrong tags is correct for segments.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongTag")
     public void testWrongTronconTagLoadSegment() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadSegment("src/test/java/data/wrongTronconTag.xml");
@@ -163,7 +226,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the error handling of wrong tags is correct for delivery requests.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongTag")
     public void testWrongEntrepotTagLoadDeliveryRequest() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadDeliveryRequest("src/test/java/data/wrongEntrepotTag.xml");
@@ -173,7 +241,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the error handling of wrong tags is correct for delivery requests.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongTag")
     public void testWrongLivraisonTagLoadDeliveryRequest() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadDeliveryRequest("src/test/java/data/wrongLivraisonTag.xml");
@@ -183,7 +256,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the error handling of wrong tags is correct for delivery requests.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongTag")
     public void testWrongDemandeTagLoadDeliveryRequest() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadDeliveryRequest("src/test/java/data/wrongDemandeTag.xml");
@@ -193,8 +271,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
-    // Those tests make sure that the error handling of wrong attributes is correct
+    /**
+     * Tests that the error handling of wrong attributes is correct for nodes.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongAttribute")
     public void testWrongIdNodeAttributeLoadNode() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadNode("src/test/java/data/wrongIdNoeudAttribute.xml");
@@ -204,7 +286,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the error handling of wrong attributes is correct for nodes.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongAttribute")
     public void testWrongLatitudeNodeAttributeLoadNode() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadNode("src/test/java/data/wrongLatitudeNoeudAttribute.xml");
@@ -214,7 +301,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the error handling of wrong attributes is correct for nodes.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongAttribute")
     public void testWrongLongitudeNodeAttributeLoadNode() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadNode("src/test/java/data/wrongLongitudeNoeudAttribute.xml");
@@ -224,7 +316,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the error handling of wrong attributes is correct for segments.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongAttribute")
     public void testWrongDestinationSegmentAttributeLoadSegment() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadSegment("src/test/java/data/wrongDestinationTronconAttribute.xml");
@@ -234,7 +331,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the error handling of wrong attributes is correct for segments.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongAttribute")
     public void testWrongLengthSegmentAttributeLoadSegment() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadSegment("src/test/java/data/wrongLongueurTronconAttribute.xml");
@@ -244,7 +346,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the error handling of wrong attributes is correct for segments.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongAttribute")
     public void testWrongOriginSegmentAttributeLoadSegment() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadSegment("src/test/java/data/wrongOrigineTronconAttribute.xml");
@@ -254,7 +361,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the error handling of wrong attributes is correct for delivery requests.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongAttribute")
     public void testWrongAdressWarehouseAttributeLoadDeliveryRequest() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadDeliveryRequest("src/test/java/data/wrongAdresseEntrepotAttribute.xml");
@@ -264,7 +376,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the error handling of wrong attributes is correct for delivery requests.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongAttribute")
     public void testWrongAdressPickupAttributeLoadDeliveryRequest() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadDeliveryRequest("src/test/java/data/wrongAdresseEnlevementAttribute.xml");
@@ -274,7 +391,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the error handling of wrong attributes is correct for delivery requests.
+     * @throws Exception if an error occurs during loading
+     */
     @Test
+    @Tag("WrongAttribute")
     public void testWrongAdressDeliveryAttributeLoadDeliveryRequest() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> {
             optimodService.loadDeliveryRequest("src/test/java/data/wrongAdresseLivraisonAttribute.xml");
@@ -284,8 +406,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
-    // Those tests make sure that TSP functions are working correctly
+    /**
+     * Tests that the TSP functions are working correctly by validating the graph.
+     * @throws Exception if an error occurs during validation
+     */
     @Test
+    @Tag("TSP")
     public void testValidateGraph() throws Exception {
         optimodService.loadSegment("src/test/java/data/petitPlanTest.xml");
         optimodService.loadDeliveryRequest("src/test/java/data/demandePetit1.xml");
@@ -299,7 +425,12 @@ public class OptimodServiceTest {
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Tests that the TSP functions are working correctly by calculating the optimal route.
+     * @throws Exception if an error occurs during calculation
+     */
     @Test
+    @Tag("TSP")
     public void testCalculateOptimalRoute() throws Exception {
         optimodService.loadNode("src/test/java/data/petitPlanTest.xml");
         optimodService.loadSegment("src/test/java/data/petitPlanTest.xml");
@@ -312,4 +443,3 @@ public class OptimodServiceTest {
         assertTrue("The route is incorrect", route.get(2) == 26086130L);
     }
 }
-
