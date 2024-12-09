@@ -302,12 +302,14 @@ public class OptimodServiceTest {
     @Test
     public void testCalculateOptimalRoute() throws Exception {
         optimodService.loadNode("src/test/java/data/petitPlanTest.xml");
-        System.out.println(optimodService.getNodeRepository().findAll());
         optimodService.loadSegment("src/test/java/data/petitPlanTest.xml");
         optimodService.loadDeliveryRequest("src/test/java/data/demandePetit1Test.xml");
 
         List<Long> route = optimodService.calculateOptimalRoute();
-        System.out.println(route);
+
+        assertTrue("The route is incorrect", route.get(0) == 25175791L);
+        assertTrue("The route is incorrect", route.get(1) == 2129259178L);
+        assertTrue("The route is incorrect", route.get(2) == 26086130L);
     }
 }
 

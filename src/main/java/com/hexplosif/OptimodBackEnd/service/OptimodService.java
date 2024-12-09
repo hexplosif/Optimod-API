@@ -529,6 +529,15 @@ public class OptimodService {
         // Build the graph from segments
         Map<Long, Map<Long, Double>> graph = buildGraph();
 
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<Long, Map<Long, Double>> entry : graph.entrySet()) {
+            sb.append("Node ").append(entry.getKey()).append(":\n");
+            for (Map.Entry<Long, Double> neighbor : entry.getValue().entrySet()) {
+                sb.append("  -> ").append(neighbor.getKey()).append(" (Distance: ").append(neighbor.getValue()).append(")\n");
+            }
+        }
+        System.out.println(sb.toString());
+
         // Validate the graph contains all necessary nodes
         validateGraph(graph, deliveryRequests);
 

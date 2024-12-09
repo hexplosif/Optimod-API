@@ -5,9 +5,11 @@
     <noeud id="26086130" latitude="45" longitude="47"/>
     <noeud id="2129259176" latitude="46" longitude="45"/>
     <noeud id="479185301" latitude="46" longitude="47"/>
+    <noeud id="479185302" latitude="45" longitude="48"/>
     <troncon destination="2129259178" longueur="1" nomRue="Rue Louis Jasseron" origine="25175791"/>
     <troncon destination="26086130" longueur="1" nomRue="Rue Danton" origine="2129259178"/>
     <troncon destination="2129259176" longueur="1" nomRue="Rue Louis Jasseron" origine="25175791"/>
     <troncon destination="479185301" longueur="2" nomRue="Rue Danton" origine="2129259176"/>
     <troncon destination="26086130" longueur="1" nomRue="Rue Louis Jasseron" origine="479185301"/>
+    <troncon destination="479185302" longueur="1" nomRue="Rue Louis Jasseron" origine="26086130"/>
 </reseau>
