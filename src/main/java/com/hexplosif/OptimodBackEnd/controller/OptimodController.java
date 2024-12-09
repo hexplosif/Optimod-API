@@ -416,6 +416,22 @@ public class OptimodController {
     }
 
     /**
+     * Add a courier
+     */
+    @PostMapping("/addCourier")
+    public void addCourier() {
+        optimodService.addCourier();
+    }
+
+    /**
+     * Delete the last courier
+     */
+    @DeleteMapping("/deleteCourier")
+    public void deleteCourier() {
+        optimodService.deleteCourier();
+    }
+
+    /**
      * Assign a courier to a delivery request
      * @param body A map containing the courier id and the delivery request id
      * @return The DeliveryRequest object updated

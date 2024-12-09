@@ -490,6 +490,25 @@ public class OptimodService {
     }
 
     /**
+     * Add a courier
+     */
+    public void addCourier() {
+        Courier courier = new Courier();
+        courier.setName("Courier " + (courierRepository.count() + 1));
+        courierRepository.save(courier);
+    }
+
+    /**
+     * Delete the last courier
+     */
+    public void deleteCourier() {
+        List<Courier> couriers = (List<Courier>) courierRepository.findAll();
+        if (!couriers.isEmpty()) {
+            courierRepository.delete(couriers.get(couriers.size() - 1));
+        }
+    }
+
+    /**
      * Assign a courier to a delivery request
      * @param idCourier The id of the courier
      * @param idDeliveryRequest The id of the delivery request
