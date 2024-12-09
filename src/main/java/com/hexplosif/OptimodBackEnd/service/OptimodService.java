@@ -526,6 +526,12 @@ public class OptimodService {
             throw new IllegalStateException("No delivery requests found.");
         }
 
+        System.out.println("-----------------------------------------------------------------------------------");
+        for (DeliveryRequest deliveryRequest : deliveryRequests) {
+            System.out.println("Courier: " + deliveryRequest.getIdCourier());
+        }
+        System.out.println("-----------------------------------------------------------------------------------");
+
         // Build the graph from segments
         Map<Long, Map<Long, Double>> graph = buildGraph();
 
