@@ -529,6 +529,7 @@ public class OptimodService {
         // Build the graph from segments
         Map<Long, Map<Long, Double>> graph = buildGraph();
 
+        /*
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<Long, Map<Long, Double>> entry : graph.entrySet()) {
             sb.append("Node ").append(entry.getKey()).append(":\n");
@@ -537,6 +538,8 @@ public class OptimodService {
             }
         }
         System.out.println(sb.toString());
+        */
+
 
         // Validate the graph contains all necessary nodes
         validateGraph(graph, deliveryRequests);
@@ -552,6 +555,9 @@ public class OptimodService {
         for (Segment segment : segments) {
             graph.putIfAbsent(segment.getIdOrigin(), new HashMap<>());
             graph.get(segment.getIdOrigin()).put(segment.getIdDestination(), segment.getLength());
+
+            graph.putIfAbsent(segment.getIdDestination(), new HashMap<>());
+            graph.get(segment.getIdDestination()).put(segment.getIdOrigin(), segment.getLength());
         }
 
         return graph;
