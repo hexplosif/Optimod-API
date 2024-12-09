@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@SuppressWarnings("SpellCheckingInspection")
 @Data
 @Service
 public class OptimodService {
@@ -508,8 +509,7 @@ public class OptimodService {
 
 
 
-    private Map<Long, Double> distances;
-    private Map<Long, Long> predecessors;
+
 
 
 
