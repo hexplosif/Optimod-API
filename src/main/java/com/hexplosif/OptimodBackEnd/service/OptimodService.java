@@ -552,16 +552,9 @@ public class OptimodService {
         return deliveryRequest.get();
     }
 
-
-
-
-
-
-
     /**
      * Calculate the optimal route.
      * @return The list of node IDs representing the optimal route.
-     * @throws Exception If a route cannot be calculated.
      */
     public List<List<Long>> calculateOptimalRoute() {
         // Fetch all delivery requests
