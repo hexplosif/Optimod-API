@@ -537,7 +537,7 @@ public class OptimodService {
      * @return The list of node IDs representing the optimal route.
      * @throws Exception If a route cannot be calculated.
      */
-    public List<Long> calculateOptimalRoute() {
+    public List<List<Long>> calculateOptimalRoute() {
         // Fetch all delivery requests
         List<DeliveryRequest> deliveryRequests = (List<DeliveryRequest>) deliveryRequestRepository.findAll();
 
@@ -545,32 +545,36 @@ public class OptimodService {
             throw new IllegalStateException("No delivery requests found.");
         }
 
-        System.out.println("-----------------------------------------------------------------------------------");
-        for (DeliveryRequest deliveryRequest : deliveryRequests) {
-            System.out.println("Courier: " + deliveryRequest.getIdCourier());
-        }
-        System.out.println("-----------------------------------------------------------------------------------");
+        // Fetch all couriers
+        List<Courier> courierList = (List<Courier>) courierRepository.findAll();
 
-        // Build the graph from segments
-        Map<Long, Map<Long, Double>> graph = buildGraph();
+        List<List<Long>> listeRoutes = new ArrayList<>();
 
-        /*
-        StringBuilder sb = new StringBuilder();
-        for (Map.Entry<Long, Map<Long, Double>> entry : graph.entrySet()) {
-            sb.append("Node ").append(entry.getKey()).append(":\n");
-            for (Map.Entry<Long, Double> neighbor : entry.getValue().entrySet()) {
-                sb.append("  -> ").append(neighbor.getKey()).append(" (Distance: ").append(neighbor.getValue()).append(")\n");
+        int nbCouriers = courierList.size();
+
+        for (int i = 0; i < nbCouriers; i++) {
+            int finalI = i;
+            List<DeliveryRequest> deliveryRequestsCourier = deliveryRequests.stream()
+                    .filter(deliveryRequest -> deliveryRequest.getIdCourier().equals(courierList.get(finalI).getId()))
+                    .collect(Collectors.toList());
+
+            if (deliveryRequestsCourier.isEmpty()) {
+                listeRoutes.add(new ArrayList<>());
+            }
+            else {
+                // Build the graph from segments
+                Map<Long, Map<Long, Double>> graph = buildGraph();
+                // Validate the graph contains all necessary nodes
+                validateGraph(graph, deliveryRequestsCourier);
+                // Calculate the optimal route
+                List<Long> route = findOptimalRoute(graph, deliveryRequestsCourier);
+                listeRoutes.add(route);
             }
         }
-        System.out.println(sb.toString());
-        */
 
+        System.out.println("Liste des routes : " + listeRoutes);
 
-        // Validate the graph contains all necessary nodes
-        validateGraph(graph, deliveryRequests);
-
-        // Calculate the optimal route
-        return findOptimalRoute(graph, deliveryRequests);
+        return listeRoutes;
     }
 
     private Map<Long, Map<Long, Double>> buildGraph() {

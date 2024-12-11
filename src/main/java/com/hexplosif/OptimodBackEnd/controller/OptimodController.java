@@ -455,7 +455,7 @@ public class OptimodController {
      * @return A list of node ids representing the optimal route
      */
     @GetMapping("/calculateOptimalRoute")
-    public List<Long> calculateOptimalRoute() {// throws Exception {
+    public List<List<Long>> calculateOptimalRoute() {// throws Exception {
         System.out.println("Calculating optimal route");
         return optimodService.calculateOptimalRoute();
     }
