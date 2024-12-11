@@ -460,7 +460,20 @@ public class OptimodService {
      * @param id The id of the courier
      */
     public void deleteCourierById(Long id) {
-        courierRepository.deleteById(id);
+        // Delete the courier if it is not assigned to any delivery request
+        Iterable<DeliveryRequest> deliveryRequests = deliveryRequestRepository.findAll();
+        boolean isAssigned = false;
+        for (DeliveryRequest deliveryRequest : deliveryRequests) {
+            if (deliveryRequest.getIdCourier() != null && deliveryRequest.getIdCourier().equals(id)) {
+                isAssigned = true;
+                break;
+            }
+        }
+        if (!isAssigned) {
+            courierRepository.deleteById(id);
+        } else {
+            throw new IllegalStateException("The courier is assigned to a delivery request.");
+        }
     }
 
     /**
@@ -504,7 +517,20 @@ public class OptimodService {
     public void deleteCourier() {
         List<Courier> couriers = (List<Courier>) courierRepository.findAll();
         if (!couriers.isEmpty()) {
-            courierRepository.delete(couriers.get(couriers.size() - 1));
+            // Delete the last courier if it is not assigned to any delivery request
+            Iterable<DeliveryRequest> deliveryRequests = deliveryRequestRepository.findAll();
+            boolean isAssigned = false;
+            for (DeliveryRequest deliveryRequest : deliveryRequests) {
+                if (deliveryRequest.getIdCourier() != null && deliveryRequest.getIdCourier().equals(couriers.get(couriers.size() - 1).getId())) {
+                    isAssigned = true;
+                    break;
+                }
+            }
+            if (!isAssigned) {
+                courierRepository.deleteById(couriers.get(couriers.size() - 1).getId());
+            } else {
+                throw new IllegalStateException("The last courier is assigned to a delivery request.");
+            }
         }
     }
 
