@@ -59,12 +59,12 @@ public class OptimodController {
             optimodService.loadDeliveryRequest(XMLFileName);
 
             // Calculate the optimal route
-            List<Long> optimalRoute = optimodService.calculateOptimalRoute();
+            //List<Long> optimalRoute = optimodService.calculateOptimalRoute();
 
             // Prepare response
             Map<String, Object> response = new HashMap<>();
             response.put("deliveryRequests", optimodService.findAllDeliveryRequests());
-            response.put("optimalRoute", optimalRoute);
+            //response.put("optimalRoute", optimalRoute);
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
