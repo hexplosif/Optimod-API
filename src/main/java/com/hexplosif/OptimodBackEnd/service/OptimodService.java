@@ -555,8 +555,10 @@ public class OptimodService {
         for (int i = 0; i < nbCouriers; i++) {
             int finalI = i;
             List<DeliveryRequest> deliveryRequestsCourier = deliveryRequests.stream()
+                    .filter(deliveryRequest -> deliveryRequest.getIdCourier() != null)
                     .filter(deliveryRequest -> deliveryRequest.getIdCourier().equals(courierList.get(finalI).getId()))
                     .collect(Collectors.toList());
+
 
             if (deliveryRequestsCourier.isEmpty()) {
                 listeRoutes.add(new ArrayList<>());
@@ -572,7 +574,7 @@ public class OptimodService {
             }
         }
 
-        System.out.println("Liste des routes : " + listeRoutes);
+        //System.out.println("Liste des routes : " + listeRoutes);
 
         return listeRoutes;
     }
