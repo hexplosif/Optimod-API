@@ -25,6 +25,7 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
  * Test class for OptimodService.
  * This class contains unit tests for the OptimodService class.
  */
+@SuppressWarnings("SpellCheckingInspection")
 @SpringBootTest
 @AutoConfigureMockMvc
 public class OptimodServiceTest {
@@ -39,7 +40,6 @@ public class OptimodServiceTest {
      * Sets up the test environment by cleaning up the database before and after each test.
      */
     @BeforeEach
-    @AfterEach
     public void setUp() {
         optimodService.deleteAllNodes();
         optimodService.deleteAllSegments();

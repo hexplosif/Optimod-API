@@ -387,27 +387,6 @@ public class OptimodController {
         optimodService.deleteAllCouriers();
     }
 
-    /**
-     * Update - Update an existing courier
-     *
-     * @param id      - The id of the courier to update
-     * @param courier - The courier object updated
-     * @return The Courier object updated
-     */
-    @PutMapping("/courier/{id}")
-    public Courier updateCourier(@PathVariable("id") final Long id, @RequestBody Courier courier) {
-        Optional<Courier> e = optimodService.findCourierById(id);
-        if (e.isPresent()) {
-            Courier currentCourier = e.get();
-
-            currentCourier.setName(courier.getName());
-
-            optimodService.saveCourier(currentCourier);
-            return currentCourier;
-        } else {
-            return null;
-        }
-    }
 
     /**
      * Delete - Delete a courier

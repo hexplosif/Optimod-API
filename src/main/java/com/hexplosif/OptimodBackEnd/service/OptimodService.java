@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,7 @@ public class OptimodService {
 
     /**
      * Parse the XML file
+     *
      * @param file The XML file
      * @return The document
      */
@@ -55,9 +57,10 @@ public class OptimodService {
 
     /**
      * Load the nodes from the XML file
+     *
      * @param XMLFileName The XML file
      */
-    public void loadNode(String XMLFileName) throws Exception{
+    public void loadNode(String XMLFileName) throws Exception {
 
         try {
             File XMLFile = new File(XMLFileName);
@@ -123,6 +126,7 @@ public class OptimodService {
 
     /**
      * Load the segments from the XML file
+     *
      * @param XMLFileName The XML file
      */
     public void loadSegment(String XMLFileName) throws Exception {
@@ -193,6 +197,7 @@ public class OptimodService {
 
     /**
      * Load the delivery request from the XML file
+     *
      * @param XMLDeliveryRequest The XML delivery request file
      */
 
@@ -252,8 +257,7 @@ public class OptimodService {
                     deliveryRequestRepository.save(deliveryRequest);
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new Exception(e.getMessage());
         }
@@ -271,6 +275,7 @@ public class OptimodService {
 
     /**
      * Get all nodes
+     *
      * @return The list of nodes
      */
     public Iterable<Node> findAllNodes() {
@@ -279,6 +284,7 @@ public class OptimodService {
 
     /**
      * Delete a node by its id
+     *
      * @param id The id of the node
      */
     public void deleteNodeById(Long id) {
@@ -287,6 +293,7 @@ public class OptimodService {
 
     /**
      * Save a node
+     *
      * @param node The node to save
      * @return The saved node
      */
@@ -294,14 +301,6 @@ public class OptimodService {
         Node savedNode;
         savedNode = nodeRepository.save(node);
         return savedNode;
-    }
-
-    /**
-     * Create a node
-     * @param node The node to create
-     */
-    public void createNode(Node node) {
-        nodeRepository.save(node);
     }
 
     /**
@@ -334,6 +333,7 @@ public class OptimodService {
 
     /**
      * Get all segments
+     *
      * @return The list of segments
      */
     public Iterable<Segment> findAllSegments() {
@@ -342,6 +342,7 @@ public class OptimodService {
 
     /**
      * Delete a segment by its id
+     *
      * @param id The id of the segment
      */
     public void deleteSegmentById(Long id) {
@@ -350,6 +351,7 @@ public class OptimodService {
 
     /**
      * Save a segment
+     *
      * @param segment The segment to save
      * @return The saved segment
      */
@@ -359,13 +361,6 @@ public class OptimodService {
         return savedSegment;
     }
 
-    /**
-     * Create a segment
-     * @param segment The segment to create
-     */
-    public void createSegment(Segment segment) {
-        segmentRepository.save(segment);
-    }
 
     /**
      * Delete all segments
@@ -397,6 +392,7 @@ public class OptimodService {
 
     /**
      * Get all delivery requests
+     *
      * @return The list of delivery requests
      */
     public Iterable<DeliveryRequest> findAllDeliveryRequests() {
@@ -405,6 +401,7 @@ public class OptimodService {
 
     /**
      * Delete a delivery request by its id
+     *
      * @param id The id of the delivery request
      */
     public void deleteDeliveryRequestById(Long id) {
@@ -413,6 +410,7 @@ public class OptimodService {
 
     /**
      * Save a delivery request
+     *
      * @param delivery_request The delivery request to save
      * @return The saved delivery request
      */
@@ -422,13 +420,6 @@ public class OptimodService {
         return savedDeliveryRequest;
     }
 
-    /**
-     * Create a delivery request
-     * @param delivery_request The delivery request to create
-     */
-    public void createDeliveryRequest(DeliveryRequest delivery_request) {
-        deliveryRequestRepository.save(delivery_request);
-    }
 
     /**
      * Delete all delivery requests
@@ -449,6 +440,7 @@ public class OptimodService {
 
     /**
      * Get all couriers
+     *
      * @return The list of couriers
      */
     public Iterable<Courier> findAllCouriers() {
@@ -457,27 +449,16 @@ public class OptimodService {
 
     /**
      * Delete a courier by its id
+     *
      * @param id The id of the courier
      */
     public void deleteCourierById(Long id) {
-        // Delete the courier if it is not assigned to any delivery request
-        Iterable<DeliveryRequest> deliveryRequests = deliveryRequestRepository.findAll();
-        boolean isAssigned = false;
-        for (DeliveryRequest deliveryRequest : deliveryRequests) {
-            if (deliveryRequest.getIdCourier() != null && deliveryRequest.getIdCourier().equals(id)) {
-                isAssigned = true;
-                break;
-            }
-        }
-        if (!isAssigned) {
-            courierRepository.deleteById(id);
-        } else {
-            throw new IllegalStateException("The courier is assigned to a delivery request.");
-        }
+        courierRepository.deleteById(id);
     }
 
     /**
      * Save a courier
+     *
      * @param delivery_request The courier to save
      * @return The saved courier
      */
@@ -485,14 +466,6 @@ public class OptimodService {
         Courier savedCourier;
         savedCourier = courierRepository.save(delivery_request);
         return savedCourier;
-    }
-
-    /**
-     * Create a courier
-     * @param delivery_request The courier to create
-     */
-    public void createCourier(Courier delivery_request) {
-        courierRepository.save(delivery_request);
     }
 
     /**
@@ -517,26 +490,14 @@ public class OptimodService {
     public void deleteCourier() {
         List<Courier> couriers = (List<Courier>) courierRepository.findAll();
         if (!couriers.isEmpty()) {
-            // Delete the last courier if it is not assigned to any delivery request
-            Iterable<DeliveryRequest> deliveryRequests = deliveryRequestRepository.findAll();
-            boolean isAssigned = false;
-            for (DeliveryRequest deliveryRequest : deliveryRequests) {
-                if (deliveryRequest.getIdCourier() != null && deliveryRequest.getIdCourier().equals(couriers.get(couriers.size() - 1).getId())) {
-                    isAssigned = true;
-                    break;
-                }
-            }
-            if (!isAssigned) {
-                courierRepository.deleteById(couriers.get(couriers.size() - 1).getId());
-            } else {
-                throw new IllegalStateException("The last courier is assigned to a delivery request.");
-            }
+            courierRepository.delete(couriers.get(couriers.size() - 1));
         }
     }
 
     /**
      * Assign a courier to a delivery request
-     * @param idCourier The id of the courier
+     *
+     * @param idCourier         The id of the courier
      * @param idDeliveryRequest The id of the delivery request
      * @return The delivery request
      */
@@ -553,14 +514,13 @@ public class OptimodService {
     }
 
 
-
-
     /**
      * Calculate the optimal route.
+     *
      * @return The list of node IDs representing the optimal route.
      * @throws Exception If a route cannot be calculated.
      */
-    public List<List<Long>> calculateOptimalRoute() {
+    public List<Long> calculateOptimalRoute() {
         // Fetch all delivery requests
         List<DeliveryRequest> deliveryRequests = (List<DeliveryRequest>) deliveryRequestRepository.findAll();
 
@@ -568,38 +528,32 @@ public class OptimodService {
             throw new IllegalStateException("No delivery requests found.");
         }
 
-        // Fetch all couriers
-        List<Courier> courierList = (List<Courier>) courierRepository.findAll();
+        System.out.println("-----------------------------------------------------------------------------------");
+        for (DeliveryRequest deliveryRequest : deliveryRequests) {
+            System.out.println("Courier: " + deliveryRequest.getIdCourier());
+        }
+        System.out.println("-----------------------------------------------------------------------------------");
 
-        List<List<Long>> listeRoutes = new ArrayList<>();
+        // Build the graph from segments
+        Map<Long, Map<Long, Double>> graph = buildGraph();
 
-        int nbCouriers = courierList.size();
-
-        for (int i = 0; i < nbCouriers; i++) {
-            int finalI = i;
-            List<DeliveryRequest> deliveryRequestsCourier = deliveryRequests.stream()
-                    .filter(deliveryRequest -> deliveryRequest.getIdCourier() != null)
-                    .filter(deliveryRequest -> deliveryRequest.getIdCourier().equals(courierList.get(finalI).getId()))
-                    .collect(Collectors.toList());
-
-
-            if (deliveryRequestsCourier.isEmpty()) {
-                listeRoutes.add(new ArrayList<>());
-            }
-            else {
-                // Build the graph from segments
-                Map<Long, Map<Long, Double>> graph = buildGraph();
-                // Validate the graph contains all necessary nodes
-                validateGraph(graph, deliveryRequestsCourier);
-                // Calculate the optimal route
-                List<Long> route = findOptimalRoute(graph, deliveryRequestsCourier);
-                listeRoutes.add(route);
+        /*
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<Long, Map<Long, Double>> entry : graph.entrySet()) {
+            sb.append("Node ").append(entry.getKey()).append(":\n");
+            for (Map.Entry<Long, Double> neighbor : entry.getValue().entrySet()) {
+                sb.append("  -> ").append(neighbor.getKey()).append(" (Distance: ").append(neighbor.getValue()).append(")\n");
             }
         }
+        System.out.println(sb.toString());
+        */
 
-        //System.out.println("Liste des routes : " + listeRoutes);
 
-        return listeRoutes;
+        // Validate the graph contains all necessary nodes
+        validateGraph(graph, deliveryRequests);
+
+        // Calculate the optimal route
+        return findOptimalRoute(graph, deliveryRequests);
     }
 
     private Map<Long, Map<Long, Double>> buildGraph() {
@@ -758,10 +712,6 @@ public class OptimodService {
 
         return distances.getOrDefault(end, Double.MAX_VALUE);
     }
-
-
-
-
 
 
 }
