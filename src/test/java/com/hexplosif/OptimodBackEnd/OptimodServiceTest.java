@@ -5,7 +5,6 @@ import com.hexplosif.OptimodBackEnd.model.DeliveryRequest;
 import com.hexplosif.OptimodBackEnd.model.Node;
 import com.hexplosif.OptimodBackEnd.model.Segment;
 import com.hexplosif.OptimodBackEnd.service.OptimodService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -29,9 +28,6 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class OptimodServiceTest {
-
-    @Autowired
-    private MockMvc mockMvc;
 
     @Autowired
     private OptimodService optimodService;

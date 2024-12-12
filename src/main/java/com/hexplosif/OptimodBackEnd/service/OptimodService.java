@@ -1,6 +1,5 @@
 package com.hexplosif.OptimodBackEnd.service;
 
-import ch.qos.logback.core.joran.sanity.Pair;
 import com.hexplosif.OptimodBackEnd.model.*;
 import com.hexplosif.OptimodBackEnd.repository.CourierRepository;
 import com.hexplosif.OptimodBackEnd.repository.DeliveryRequestRepository;
@@ -119,7 +118,6 @@ public class OptimodService {
             nodeRepository.saveAll(tmpListNodes);
 
         } catch (Exception e) {
-            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
@@ -190,7 +188,6 @@ public class OptimodService {
             segmentRepository.saveAll(tmpListSegments);
 
         } catch (Exception e) {
-            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
@@ -258,7 +255,6 @@ public class OptimodService {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
@@ -518,7 +514,6 @@ public class OptimodService {
      * Calculate the optimal route.
      *
      * @return The list of node IDs representing the optimal route.
-     * @throws Exception If a route cannot be calculated.
      */
     public List<Long> calculateOptimalRoute() {
         // Fetch all delivery requests
