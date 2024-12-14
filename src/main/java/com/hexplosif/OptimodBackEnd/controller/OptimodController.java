@@ -6,6 +6,7 @@ import com.hexplosif.OptimodBackEnd.model.Node;
 import com.hexplosif.OptimodBackEnd.model.Segment;
 import com.hexplosif.OptimodBackEnd.service.OptimodService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -394,11 +395,18 @@ public class OptimodController {
      * @param id - The id of the courier to delete
      */
     @DeleteMapping("/courier/{id}")
-    public void deleteCourier(@PathVariable("id") final Long id) {
+    public ResponseEntity<String> deleteCourier(@PathVariable("id") final Long id) {
         try {
+            System.out.println("Deleting courier " + id);
             optimodService.deleteCourierById(id);
+            return ResponseEntity.noContent().build(); // 204 No Content si suppression réussie
+        } catch (IllegalStateException e) {
+            // Renvoyer une erreur 400 (Bad Request) avec le message d'erreur
+            System.out.println("Error: " + e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
+            // Renvoyer une erreur générique 500 (Internal Server Error)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne du serveur.");
         }
     }
 
