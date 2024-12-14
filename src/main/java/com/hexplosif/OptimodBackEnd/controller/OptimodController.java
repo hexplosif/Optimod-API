@@ -395,7 +395,11 @@ public class OptimodController {
      */
     @DeleteMapping("/courier/{id}")
     public void deleteCourier(@PathVariable("id") final Long id) {
-        optimodService.deleteCourierById(id);
+        try {
+            optimodService.deleteCourierById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -411,7 +415,11 @@ public class OptimodController {
      */
     @DeleteMapping("/deleteCourier")
     public void deleteCourier() {
-        optimodService.deleteCourier();
+        try {
+            optimodService.deleteCourier();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

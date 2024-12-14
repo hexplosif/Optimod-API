@@ -227,6 +227,14 @@ public class OptimodService {
                 throw new Exception("No warehouse address found in the XML file");
             }
 
+            // Check if the warehouse is the same as other delivery requests that are already in the database, if not throw an exception
+            List<DeliveryRequest> deliveryRequests = (List<DeliveryRequest>) deliveryRequestRepository.findAll();
+            for (DeliveryRequest deliveryRequest : deliveryRequests) {
+                if (deliveryRequest.getIdWarehouse() != Long.parseLong(warehouseAddress)) {
+                    throw new Exception("The warehouse address is different from the one already in the database");
+                }
+            }
+
             for (int i = 0; i < listeLivraisons.getLength(); i++) {
                 org.w3c.dom.Node livraison = listeLivraisons.item(i);
 
@@ -448,7 +456,14 @@ public class OptimodService {
      *
      * @param id The id of the courier
      */
-    public void deleteCourierById(Long id) {
+    public void deleteCourierById(Long id) throws IllegalStateException {
+        // Check if the courier is assigned to a delivery request, if so, throw an exception
+        List<DeliveryRequest> deliveryRequests = (List<DeliveryRequest>) deliveryRequestRepository.findAll();
+        for (DeliveryRequest deliveryRequest : deliveryRequests) {
+            if (deliveryRequest.getIdCourier() != null && deliveryRequest.getIdCourier().equals(id)) {
+                throw new IllegalStateException("The courier is assigned to a delivery request");
+            }
+        }
         courierRepository.deleteById(id);
     }
 
@@ -483,9 +498,16 @@ public class OptimodService {
     /**
      * Delete the last courier
      */
-    public void deleteCourier() {
+    public void deleteCourier() throws IllegalStateException {
         List<Courier> couriers = (List<Courier>) courierRepository.findAll();
         if (!couriers.isEmpty()) {
+            // check if the courier is assigned to a delivery request, if so, throw an exception
+            List<DeliveryRequest> deliveryRequests = (List<DeliveryRequest>) deliveryRequestRepository.findAll();
+            for (DeliveryRequest deliveryRequest : deliveryRequests) {
+                if (deliveryRequest.getIdCourier() != null && deliveryRequest.getIdCourier().equals(couriers.get(couriers.size() - 1).getId())) {
+                    throw new IllegalStateException("The courier is assigned to a delivery request");
+                }
+            }
             courierRepository.delete(couriers.get(couriers.size() - 1));
         }
     }
