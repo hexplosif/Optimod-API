@@ -550,7 +550,8 @@ public class OptimodService {
     public void addCourier() throws IllegalStateException {
         try {
             Courier courier = new Courier();
-            courier.setName("Courier " + (courierRepository.count() + 1));
+            courierRepository.save(courier);
+            courier.setName("Courier " + courier.getId());
             courierRepository.save(courier);
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage());
@@ -606,7 +607,7 @@ public class OptimodService {
      *
      * @return The list of node IDs representing the optimal route.
      */
-    public List<List<Long>> calculateOptimalRoute() throws IllegalStateException {
+    public Map<Long, List<Long>> calculateOptimalRoute() throws IllegalStateException {
         // Fetch all delivery requests
         List<DeliveryRequest> deliveryRequests = (List<DeliveryRequest>) deliveryRequestRepository.findAll();
 
@@ -627,7 +628,7 @@ public class OptimodService {
             throw new IllegalStateException("No couriers found.");
         }
 
-        List<List<Long>> listeRoutes = new ArrayList<>();
+        Map<Long, List<Long>> listeRoutes = new HashMap<>();
 
         int nbCouriers = courierList.size();
 
@@ -639,22 +640,18 @@ public class OptimodService {
                     .collect(Collectors.toList());
 
 
-            if (deliveryRequestsCourier.isEmpty()) {
-                listeRoutes.add(new ArrayList<>());
-            }
-            else {
-                // Build the graph from segments
+            if (!deliveryRequestsCourier.isEmpty()) {
                 Map<Long, Map<Long, Double>> graph = buildGraph();
-                // Validate the graph contains all necessary nodes
                 validateGraph(graph, deliveryRequestsCourier);
-                // Calculate the optimal route
+
                 List<Long> route = findOptimalRoute(graph, deliveryRequestsCourier);
-                listeRoutes.add(route);
+                listeRoutes.put(courierList.get(i).getId(), route);
             }
         }
 
-        if (listeRoutes.stream().allMatch(List::isEmpty)) {
-            throw new IllegalStateException("No courier assigned to any delivery request");
+        // Check if no courier is assigned to any delivery request like
+        if (listeRoutes.isEmpty()) {
+            throw new IllegalStateException("No courier is assigned to any delivery request");
         }
 
         return listeRoutes;

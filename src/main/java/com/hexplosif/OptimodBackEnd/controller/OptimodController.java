@@ -541,7 +541,7 @@ public class OptimodController {
     @GetMapping("/calculateOptimalRoute")
     public ResponseEntity<?> calculateOptimalRoute() {
         try {
-            List<List<Long>> optimalRoute = optimodService.calculateOptimalRoute();
+            Map<Long, List<Long>> optimalRoute = optimodService.calculateOptimalRoute();
             return ResponseEntity.ok(optimalRoute);
         } catch (IllegalStateException e) {
             // Renvoyer une erreur 400 (Bad Request) avec le message d'erreur
