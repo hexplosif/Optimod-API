@@ -41,20 +41,6 @@ public class OptimodService {
     private CourierRepository courierRepository;
 
     /**
-     * Parse the XML file
-     *
-     * @param file The XML file
-     * @return The document
-     */
-    private Document parseXMLFile(File file) throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.parse(file);
-        document.getDocumentElement().normalize();
-        return document;
-    }
-
-    /**
      * Load the nodes from the XML file
      *
      * @param XMLFileName The XML file
@@ -67,14 +53,14 @@ public class OptimodService {
 
             // Check if <reseau> is present
             if (!document.getDocumentElement().getNodeName().equals("reseau")) {
-                throw new Exception("No 'reseau' tag found in the XML file");
+                throw new IllegalStateException("No 'reseau' tag found in the XML file");
             }
 
             NodeList nodeList = document.getElementsByTagName("noeud");
 
             // Integrity check
             if (nodeList.getLength() == 0) {
-                throw new Exception("No 'noeud' tag found in the XML file");
+                throw new IllegalStateException("No 'noeud' tag found in the XML file");
             }
 
             List<Node> tmpListNodes = (List<Node>) nodeRepository.findAll();
@@ -83,34 +69,8 @@ public class OptimodService {
                 org.w3c.dom.Node noeud = nodeList.item(i);
 
                 if (noeud.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-                    Element elementNoeud = (Element) noeud;
+                    Node node = getNode((Element) noeud, i);
 
-                    String idNoeud = elementNoeud.getAttribute("id");
-
-                    // Integrity check
-                    if (idNoeud.isEmpty()) {
-                        throw new Exception("No id found for the node : " + i);
-                    }
-                    String latitudeNoeud = elementNoeud.getAttribute("latitude");
-
-                    // Integrity check
-                    if (latitudeNoeud.isEmpty()) {
-                        throw new Exception("No latitude found for the node : " + i);
-                    }
-
-                    String longitudeNoeud = elementNoeud.getAttribute("longitude");
-
-                    // Integrity check
-                    if (longitudeNoeud.isEmpty()) {
-                        throw new Exception("No longitude found for the node : " + i);
-                    }
-
-                    Node node = new Node();
-                    node.setId(Long.parseLong(idNoeud));
-                    node.setLatitude(Double.parseDouble(latitudeNoeud));
-                    node.setLongitude(Double.parseDouble(longitudeNoeud));
-
-                    //System.out.println("Node: " + node.getId() + ", Latitude: " + node.getLatitude() + ", Longitude: " + node.getLongitude());
                     tmpListNodes.add(node);
                 }
             }
@@ -122,10 +82,40 @@ public class OptimodService {
         }
     }
 
+    private static Node getNode(Element noeud, int i) {
+        Element elementNoeud = noeud;
+
+        String idNoeud = elementNoeud.getAttribute("id");
+
+        // Integrity check
+        if (idNoeud.isEmpty()) {
+            throw new IllegalStateException("No id found for the node : " + i);
+        }
+        String latitudeNoeud = elementNoeud.getAttribute("latitude");
+
+        // Integrity check
+        if (latitudeNoeud.isEmpty()) {
+            throw new IllegalStateException("No latitude found for the node : " + i);
+        }
+
+        String longitudeNoeud = elementNoeud.getAttribute("longitude");
+
+        // Integrity check
+        if (longitudeNoeud.isEmpty()) {
+            throw new IllegalStateException("No longitude found for the node : " + i);
+        }
+
+        Node node = new Node();
+        node.setId(Long.parseLong(idNoeud));
+        node.setLatitude(Double.parseDouble(latitudeNoeud));
+        node.setLongitude(Double.parseDouble(longitudeNoeud));
+        return node;
+    }
+
     /**
      * Load the segments from the XML file
-     *
      * @param XMLFileName The XML file
+     * @throws Exception If an error occurs
      */
     public void loadSegment(String XMLFileName) throws Exception {
 
@@ -135,14 +125,14 @@ public class OptimodService {
 
             // Check if <reseau> is present
             if (!document.getDocumentElement().getNodeName().equals("reseau")) {
-                throw new Exception("No 'reseau' tag found in the XML file");
+                throw new IllegalStateException("No 'reseau' tag found in the XML file");
             }
 
             NodeList listeTroncons = document.getElementsByTagName("troncon");
 
             // Integrity check
             if (listeTroncons.getLength() == 0) {
-                throw new Exception("No 'troncon' tag found in the XML file");
+                throw new IllegalStateException("No 'troncon' tag found in the XML file");
             }
 
             List<Segment> tmpListSegments = (List<Segment>) segmentRepository.findAll();
@@ -156,19 +146,19 @@ public class OptimodService {
                     String origineTroncon = elementTroncon.getAttribute("origine");
                     // Integrity check
                     if (origineTroncon.isEmpty()) {
-                        throw new Exception("No origin found for the segment : " + i);
+                        throw new IllegalStateException("No origin found for the segment : " + i);
                     }
 
                     String destinationTroncon = elementTroncon.getAttribute("destination");
                     // Integrity check
                     if (destinationTroncon.isEmpty()) {
-                        throw new Exception("No destination found for the segment : " + i);
+                        throw new IllegalStateException("No destination found for the segment : " + i);
                     }
 
                     String longueurTroncon = elementTroncon.getAttribute("longueur");
                     // Integrity check
                     if (longueurTroncon.isEmpty()) {
-                        throw new Exception("No length found for the segment : " + i);
+                        throw new IllegalStateException("No length found for the segment : " + i);
                     }
 
                     String nomRueTroncon = elementTroncon.getAttribute("nomRue");
@@ -180,7 +170,6 @@ public class OptimodService {
                     segment.setLength(Double.parseDouble(longueurTroncon));
                     segment.setName(nomRueTroncon);
 
-                    //System.out.println("Segment: " + segment.getIdOrigin() + ", Destination: " + segment.getIdDestination() + ", Length: " + segment.getLength() + ", Name: " + segment.getName());
                     tmpListSegments.add(segment);
                 }
             }
@@ -206,32 +195,32 @@ public class OptimodService {
 
             // Check if <demandeDeLivraisons> is present
             if (!document.getDocumentElement().getNodeName().equals("demandeDeLivraisons")) {
-                throw new Exception("No 'demandeDeLivraisons' tag found in the XML file");
+                throw new IllegalStateException("No 'demandeDeLivraisons' tag found in the XML file");
             }
 
             NodeList listeLivraisons = document.getElementsByTagName("livraison");
             // Integrity check
             if (listeLivraisons.getLength() == 0) {
-                throw new Exception("No delivery request found in the XML file");
+                throw new IllegalStateException("No delivery request found in the XML file");
             }
 
             org.w3c.dom.Node warehouse = document.getElementsByTagName("entrepot").item(0); // Warehouse is the first element
             // Integrity check
             if (warehouse == null) {
-                throw new Exception("No warehouse found in the first line of the XML file");
+                throw new IllegalStateException("No warehouse found in the first line of the XML file");
             }
 
             String warehouseAddress = ((Element) warehouse).getAttribute("adresse");
             // Integrity check
             if (warehouseAddress.isEmpty()) {
-                throw new Exception("No warehouse address found in the XML file");
+                throw new IllegalStateException("No warehouse address found in the XML file");
             }
 
             // Check if the warehouse is the same as other delivery requests that are already in the database, if not throw an exception
             List<DeliveryRequest> deliveryRequests = (List<DeliveryRequest>) deliveryRequestRepository.findAll();
             for (DeliveryRequest deliveryRequest : deliveryRequests) {
                 if (deliveryRequest.getIdWarehouse() != Long.parseLong(warehouseAddress)) {
-                    throw new Exception("The warehouse address is different from the one already in the database");
+                    throw new IllegalStateException("The warehouse address is different from the one already in the database");
                 }
             }
 
@@ -244,13 +233,13 @@ public class OptimodService {
                     String adresseEnlevement = elementLivraison.getAttribute("adresseEnlevement");
                     // Integrity check
                     if (adresseEnlevement.isEmpty()) {
-                        throw new Exception("No pickup address found for the delivery request : " + i);
+                        throw new IllegalStateException("No pickup address found for the delivery request : " + i);
                     }
 
                     String adresseLivraison = elementLivraison.getAttribute("adresseLivraison");
                     // Integrity check
                     if (adresseLivraison.isEmpty()) {
-                        throw new Exception("No delivery address found for the delivery request : " + i);
+                        throw new IllegalStateException("No delivery address found for the delivery request : " + i);
                     }
 
                     DeliveryRequest deliveryRequest = new DeliveryRequest();
@@ -389,27 +378,68 @@ public class OptimodService {
      *
      * @param id The id of the delivery request
      * @return The delivery request
+     * @throws IllegalStateException If an error occurs
      */
-    public Optional<DeliveryRequest> findDeliveryRequestById(Long id) {
-        return deliveryRequestRepository.findById(id);
+    public Optional<DeliveryRequest> findDeliveryRequestById(Long id) throws IllegalStateException {
+        try {
+            return deliveryRequestRepository.findById(id);
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
+        }
     }
 
     /**
      * Get all delivery requests
-     *
      * @return The list of delivery requests
+     * @throws IllegalStateException If an error occurs
      */
-    public Iterable<DeliveryRequest> findAllDeliveryRequests() {
-        return deliveryRequestRepository.findAll();
+    public Iterable<DeliveryRequest> findAllDeliveryRequests() throws IllegalStateException {
+        try {
+            return deliveryRequestRepository.findAll();
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
+        }
+    }
+
+    /**
+     * Update a delivery request
+     * @param id The id of the delivery request
+     * @param deliveryRequest The new delivery request
+     * @return The updated delivery request
+     * @throws IllegalStateException If the delivery request is not found
+     */
+    public DeliveryRequest updateDeliveryRequest(Long id, DeliveryRequest deliveryRequest) throws IllegalStateException {
+        Optional<DeliveryRequest> optionalDeliveryRequest = deliveryRequestRepository.findById(id);
+        if (optionalDeliveryRequest.isEmpty()) {
+            throw new IllegalStateException("Delivery request not found");
+        }
+        optionalDeliveryRequest.get().setIdPickup(deliveryRequest.getIdPickup());
+        optionalDeliveryRequest.get().setIdDelivery(deliveryRequest.getIdDelivery());
+        optionalDeliveryRequest.get().setIdWarehouse(deliveryRequest.getIdWarehouse());
+
+        if (deliveryRequest.getIdCourier() != null) {
+            optionalDeliveryRequest.get().setIdCourier(deliveryRequest.getIdCourier());
+        }
+
+        return deliveryRequestRepository.save(optionalDeliveryRequest.get());
     }
 
     /**
      * Delete a delivery request by its id
-     *
      * @param id The id of the delivery request
+     * @throws IllegalStateException If the delivery request is not found
      */
-    public void deleteDeliveryRequestById(Long id) {
-        deliveryRequestRepository.deleteById(id);
+    public void deleteDeliveryRequestById(Long id) throws IllegalStateException {
+        try {
+            // Check if the delivery request exists
+            Optional<DeliveryRequest> deliveryRequest = deliveryRequestRepository.findById(id);
+            if (deliveryRequest.isEmpty()) {
+                throw new IllegalStateException("Delivery request not found");
+            }
+            deliveryRequestRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
+        }
     }
 
     /**
@@ -417,19 +447,29 @@ public class OptimodService {
      *
      * @param delivery_request The delivery request to save
      * @return The saved delivery request
+     * @throws IllegalStateException If an error occurs
      */
-    public DeliveryRequest saveDeliveryRequest(DeliveryRequest delivery_request) {
-        DeliveryRequest savedDeliveryRequest;
-        savedDeliveryRequest = deliveryRequestRepository.save(delivery_request);
-        return savedDeliveryRequest;
+    public DeliveryRequest saveDeliveryRequest(DeliveryRequest delivery_request) throws IllegalStateException {
+        try {
+            DeliveryRequest savedDeliveryRequest;
+            savedDeliveryRequest = deliveryRequestRepository.save(delivery_request);
+            return savedDeliveryRequest;
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
+        }
     }
 
 
     /**
      * Delete all delivery requests
+     * @throws IllegalStateException If an error occurs
      */
-    public void deleteAllDeliveryRequests() {
-        deliveryRequestRepository.deleteAll();
+    public void deleteAllDeliveryRequests() throws IllegalStateException {
+        try {
+            deliveryRequestRepository.deleteAll();
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
+        }
     }
 
     /**
@@ -438,8 +478,12 @@ public class OptimodService {
      * @param id The id of the courier
      * @return The courier
      */
-    public Optional<Courier> findCourierById(Long id) {
-        return courierRepository.findById(id);
+    public Optional<Courier> findCourierById(Long id) throws IllegalStateException {
+        try {
+            return courierRepository.findById(id);
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
+        }
     }
 
     /**
@@ -447,8 +491,12 @@ public class OptimodService {
      *
      * @return The list of couriers
      */
-    public Iterable<Courier> findAllCouriers() {
-        return courierRepository.findAll();
+    public Iterable<Courier> findAllCouriers() throws IllegalStateException {
+        try {
+            return courierRepository.findAll();
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
+        }
     }
 
     /**
@@ -470,29 +518,43 @@ public class OptimodService {
     /**
      * Save a courier
      *
-     * @param delivery_request The courier to save
+     * @param courier The courier to save
      * @return The saved courier
      */
-    public Courier saveCourier(Courier delivery_request) {
-        Courier savedCourier;
-        savedCourier = courierRepository.save(delivery_request);
-        return savedCourier;
+    public Courier saveCourier(Courier courier) throws IllegalStateException {
+        try {
+            Courier savedCourier;
+            savedCourier = courierRepository.save(courier);
+            return savedCourier;
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
+        }
     }
 
     /**
      * Delete all couriers
      */
-    public void deleteAllCouriers() {
+    public void deleteAllCouriers() throws IllegalStateException {
+        List<DeliveryRequest> deliveryRequests = (List<DeliveryRequest>) deliveryRequestRepository.findAll();
+        for (DeliveryRequest deliveryRequest : deliveryRequests) {
+            if (deliveryRequest.getIdCourier() != null) {
+                throw new IllegalStateException("A courier is assigned to a delivery request");
+            }
+        }
         courierRepository.deleteAll();
     }
 
     /**
      * Add a courier
      */
-    public void addCourier() {
-        Courier courier = new Courier();
-        courier.setName("Courier " + (courierRepository.count() + 1));
-        courierRepository.save(courier);
+    public void addCourier() throws IllegalStateException {
+        try {
+            Courier courier = new Courier();
+            courier.setName("Courier " + (courierRepository.count() + 1));
+            courierRepository.save(courier);
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
+        }
     }
 
     /**
@@ -519,16 +581,23 @@ public class OptimodService {
      * @param idDeliveryRequest The id of the delivery request
      * @return The delivery request
      */
-    public DeliveryRequest assignCourier(Long idCourier, Long idDeliveryRequest) {
-        Optional<Courier> courier = courierRepository.findById(idCourier);
-        Optional<DeliveryRequest> deliveryRequest = deliveryRequestRepository.findById(idDeliveryRequest);
+    public void assignCourier(Long idCourier, Long idDeliveryRequest) throws IllegalStateException {
+        try {
+            Optional<Courier> courier = courierRepository.findById(idCourier);
+            if (courier.isEmpty()) {
+                throw new IllegalStateException("Courier not found");
+            }
 
-        if (courier.isPresent() && deliveryRequest.isPresent()) {
+            Optional<DeliveryRequest> deliveryRequest = deliveryRequestRepository.findById(idDeliveryRequest);
+            if (deliveryRequest.isEmpty()) {
+                throw new IllegalStateException("Delivery request not found");
+            }
+
             deliveryRequest.get().setIdCourier(idCourier);
             deliveryRequestRepository.save(deliveryRequest.get());
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
         }
-
-        return deliveryRequest.get();
     }
 
 
@@ -537,7 +606,7 @@ public class OptimodService {
      *
      * @return The list of node IDs representing the optimal route.
      */
-    public List<List<Long>> calculateOptimalRoute() {
+    public List<List<Long>> calculateOptimalRoute() throws IllegalStateException {
         // Fetch all delivery requests
         List<DeliveryRequest> deliveryRequests = (List<DeliveryRequest>) deliveryRequestRepository.findAll();
 
@@ -553,6 +622,10 @@ public class OptimodService {
 
         // Fetch all couriers
         List<Courier> courierList = (List<Courier>) courierRepository.findAll();
+
+        if (courierList.isEmpty()) {
+            throw new IllegalStateException("No couriers found.");
+        }
 
         List<List<Long>> listeRoutes = new ArrayList<>();
 
@@ -578,6 +651,10 @@ public class OptimodService {
                 List<Long> route = findOptimalRoute(graph, deliveryRequestsCourier);
                 listeRoutes.add(route);
             }
+        }
+
+        if (listeRoutes.stream().allMatch(List::isEmpty)) {
+            throw new IllegalStateException("No courier assigned to any delivery request");
         }
 
         return listeRoutes;
@@ -740,5 +817,17 @@ public class OptimodService {
         return distances.getOrDefault(end, Double.MAX_VALUE);
     }
 
-
+    /**
+     * Parse the XML file
+     *
+     * @param file The XML file
+     * @return The document
+     */
+    private Document parseXMLFile(File file) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document document = builder.parse(file);
+        document.getDocumentElement().normalize();
+        return document;
+    }
 }

@@ -23,8 +23,16 @@ public class OptimodController {
     @Autowired
     private OptimodService optimodService;
 
+    /**
+     * Load a map from an XML file
+     * @param file - The XML file containing the map
+     * @return A ResponseEntity object containing the map data
+     *         200 OK if the map is loaded successfully
+     *         400 Bad Request if an error occurs while loading the map
+     *         500 Internal Server Error if an error occurs
+     */
     @PostMapping("/loadMap")
-    public ResponseEntity<Map<String, Object>> loadMap(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> loadMap(@RequestParam("file") MultipartFile file) {
         try {
             String XMLFileName = saveUploadedFile(file);
 
@@ -36,22 +44,24 @@ public class OptimodController {
             optimodService.loadNode(XMLFileName);
             optimodService.loadSegment(XMLFileName);
 
-            // Renvoyer les données mises à jour
-            Map<String, Object> response = new HashMap<>();
-            response.put("nodes", optimodService.findAllNodes()); // Renvoie-les nodes
-            response.put("segments", optimodService.findAllSegments()); // Renvoie les segments
-
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok("Carte chargée avec succès.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of(
-                    "error", "Erreur lors du chargement de la carte.",
-                    "details", e.getMessage()
-            ));
+            return ResponseEntity.status(500).body(e.getMessage());
         }
     }
 
+    /**
+     * Load a delivery request from an XML file
+     * @param file - The XML file containing the delivery request
+     * @return A ResponseEntity object containing the delivery request data
+     *         200 OK if the delivery request is loaded successfully
+     *         400 Bad Request if an error occurs while loading the delivery request
+     *         500 Internal Server Error if an error occurs
+     */
     @PostMapping("/loadDeliveryRequest")
-    public ResponseEntity<Map<String, Object>> loadDeliveryRequest(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> loadDeliveryRequest(@RequestParam("file") MultipartFile file) {
         try {
             // Save the uploaded file to a temporary location
             String XMLFileName = saveUploadedFile(file);
@@ -59,20 +69,11 @@ public class OptimodController {
             // Load delivery requests into the database
             optimodService.loadDeliveryRequest(XMLFileName);
 
-            // Calculate the optimal route
-            //List<Long> optimalRoute = optimodService.calculateOptimalRoute();
-
-            // Prepare response
-            Map<String, Object> response = new HashMap<>();
-            response.put("deliveryRequests", optimodService.findAllDeliveryRequests());
-            //response.put("optimalRoute", optimalRoute);
-
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok("Demande de livraison chargée avec succès.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of(
-                    "error", "Erreur lors du chargement des demandes de livraison.",
-                    "details", e.getMessage()
-            ));
+            return ResponseEntity.status(500).body(e.getMessage());
         }
     }
 
@@ -276,86 +277,122 @@ public class OptimodController {
      * Create - Add a new delivery_request
      *
      * @param delivery_request An object delivery_request
-     * @return The delivery_request object saved
+     * @return A ResponseEntity object containing the delivery_request object saved
+     *   200 OK if the delivery_request is saved successfully
+     *   500 Internal Server Error if an error occurs
      */
     @PostMapping("/delivery_request")
-    public DeliveryRequest createDeliveryRequest(@RequestBody DeliveryRequest delivery_request) {
-        return optimodService.saveDeliveryRequest(delivery_request);
+    public ResponseEntity<DeliveryRequest> createDeliveryRequest(@RequestBody DeliveryRequest delivery_request) {
+        try {
+            return ResponseEntity.ok(optimodService.saveDeliveryRequest(delivery_request));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     /**
      * Read - Get one delivery_request
      *
      * @param id The id of the delivery_request
-     * @return An DeliveryRequest object fulfilled
+     * @return A ResponseEntity object containing the delivery_request object
+     *    200 OK if the delivery_request is fetched successfully
+     *    500 Internal Server Error if an error occurs
      */
     @GetMapping("/delivery_request/{id}")
-    public DeliveryRequest getDeliveryRequest(@PathVariable("id") final Long id) {
-        Optional<DeliveryRequest> delivery_request = optimodService.findDeliveryRequestById(id);
-        return delivery_request.orElse(null);
+    public ResponseEntity<Optional<DeliveryRequest>> getDeliveryRequest(@PathVariable("id") final Long id) {
+        try {
+            return ResponseEntity.ok(optimodService.findDeliveryRequestById(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     /**
      * Read - Get all delivery_requests
-     *
-     * @return - An Iterable object of DeliveryRequest fulfilled
+     * @return - A ResponseEntity object containing the list of delivery_requests
+     *     200 OK if the delivery_requests are fetched successfully
+     *     500 Internal Server Error if an error occurs
      */
     @GetMapping("/delivery_requests")
-    public Iterable<DeliveryRequest> getDeliveryRequests() {
-        return optimodService.findAllDeliveryRequests();
+    public ResponseEntity<Iterable<DeliveryRequest>> getDeliveryRequests() {
+        try {
+            return ResponseEntity.ok(optimodService.findAllDeliveryRequests());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     /**
      * Delete - Delete all delivery_requests
+     * @return A ResponseEntity object containing the result of the deletion
+     *     204 No Content if deletion is successful
+     *     500 Internal Server Error if an error occurs
      */
     @DeleteMapping("/delivery_requests")
-    public void deleteDeliveryRequests() {
-        optimodService.deleteAllDeliveryRequests();
+    public ResponseEntity<String> deleteDeliveryRequests() {
+        try {
+            optimodService.deleteAllDeliveryRequests();
+            return ResponseEntity.noContent().build(); // 204 No Content si suppression réussie
+        } catch (Exception e) {
+            // Renvoyer une erreur générique 500 (Internal Server Error)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne du serveur.");
+        }
     }
 
     /**
      * Update - Update an existing delivery_request
      *
-     * @param id               - The id of the delivery_request to update
-     * @param delivery_request - The delivery_request object updated
-     * @return The DeliveryRequest object updated
+     * @param id - The id of the delivery_request to update
+     *           delivery_request - The delivery_request object updated
+     * @return A ResponseEntity object containing the delivery_request object updated
+     *      200 OK if the delivery_request is updated successfully
+     *      500 Internal Server Error if an error occurs
      */
     @PutMapping("/delivery_request/{id}")
-    public DeliveryRequest updateDeliveryRequest(@PathVariable("id") final Long id, @RequestBody DeliveryRequest delivery_request) {
-        Optional<DeliveryRequest> e = optimodService.findDeliveryRequestById(id);
-        if (e.isPresent()) {
-            DeliveryRequest currentDeliveryRequest = e.get();
-
-            currentDeliveryRequest.setIdDelivery(delivery_request.getIdDelivery());
-            currentDeliveryRequest.setIdPickup(delivery_request.getIdPickup());
-            currentDeliveryRequest.setIdWarehouse(delivery_request.getIdWarehouse());
-
-            optimodService.saveDeliveryRequest(currentDeliveryRequest);
-            return currentDeliveryRequest;
-        } else {
-            return null;
+    public ResponseEntity<DeliveryRequest> updateDeliveryRequest(@PathVariable("id") final Long id, @RequestBody DeliveryRequest delivery_request) {
+        try {
+            return ResponseEntity.ok(optimodService.updateDeliveryRequest(id, delivery_request));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
     /**
      * Delete - Delete an delivery_request
-     *
      * @param id - The id of the delivery_request to delete
+     * @return A ResponseEntity object containing the result of the deletion
+     *       204 No Content if deletion is successful
+     *       400 Bad Request if deletion is not possible
+     *       500 Internal Server Error if an error occurs
      */
     @DeleteMapping("/delivery_request/{id}")
-    public void deleteDeliveryRequest(@PathVariable("id") final Long id) {
-        optimodService.deleteDeliveryRequestById(id);
+    public ResponseEntity<String> deleteDeliveryRequest(@PathVariable("id") final Long id) {
+        try {
+            optimodService.deleteDeliveryRequestById(id);
+            return ResponseEntity.noContent().build(); // 204 No Content si suppression réussie
+        } catch (IllegalStateException e) {
+            // Renvoyer une erreur 400 (Bad Request) avec le message d'erreur
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            // Renvoyer une erreur générique 500 (Internal Server Error)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne du serveur.");
+        }
     }
 
     /**
      * Create - Add a new courier
-     *
      * @param courier An object courier
-     * @return The courier object saved
+     * @return A ResponseEntity object containing the courier object saved
+     *        200 OK if the courier is saved successfully
+     *        500 Internal Server Error if an error occurs
      */
     @PostMapping("/courier")
-    public Courier createCourier(@RequestBody Courier courier) {
-        return optimodService.saveCourier(courier);
+    public ResponseEntity<Courier> createCourier(@RequestBody Courier courier) {
+        try {
+            return ResponseEntity.ok(optimodService.saveCourier(courier));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     /**
@@ -365,34 +402,53 @@ public class OptimodController {
      * @return A Courier object fulfilled
      */
     @GetMapping("/courier/{id}")
-    public Courier getCourier(@PathVariable("id") final Long id) {
-        Optional<Courier> courier = optimodService.findCourierById(id);
-        return courier.orElse(null);
+    public ResponseEntity<Optional<Courier>> getCourier(@PathVariable("id") final Long id) {
+        try {
+            return ResponseEntity.ok(optimodService.findCourierById(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     /**
      * Read - Get all couriers
-     *
-     * @return - An Iterable object of Courier fulfilled
+     * @return - A ResponseEntity object containing the list of couriers
+     * @throws Exception - If an error occurs while fetching the couriers
      */
     @GetMapping("/couriers")
-    public Iterable<Courier> getCouriers() {
-        return optimodService.findAllCouriers();
+    public ResponseEntity<Iterable<Courier>> getCouriers() {
+        try {
+            return ResponseEntity.ok(optimodService.findAllCouriers());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     /**
      * Delete - Delete all couriers
+     * @return A ResponseEntity object containing the result of the deletion
+     *      204 No Content if deletion is successful
+     *      500 Internal Server Error if an error occurs
      */
     @DeleteMapping("/couriers")
-    public void deleteCouriers() {
-        optimodService.deleteAllCouriers();
+    public ResponseEntity<String> deleteCouriers() {
+        try {
+            optimodService.deleteAllCouriers();
+            return ResponseEntity.noContent().build(); // 204 No Content si suppression réussie
+        } catch (Exception e) {
+            // Renvoyer une erreur générique 500 (Internal Server Error)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne du serveur.");
+        }
     }
 
 
     /**
      * Delete - Delete a courier
-     *
      * @param id - The id of the courier to delete
+     * @return A ResponseEntity object containing the result of the deletion
+     *       204 No Content if deletion is successful
+     *       400 Bad Request if deletion is not possible
+     *       500 Internal Server Error if an error occurs
      */
     @DeleteMapping("/courier/{id}")
     public ResponseEntity<String> deleteCourier(@PathVariable("id") final Long id) {
@@ -412,21 +468,39 @@ public class OptimodController {
 
     /**
      * Add a courier
+     * @return A ResponseEntity object containing the result of the addition
+     *       204 No Content if addition is successful
+     *       500 Internal Server Error if an error occurs
      */
     @PostMapping("/addCourier")
-    public void addCourier() {
-        optimodService.addCourier();
+    public ResponseEntity<String> addCourier() {
+        try {
+            optimodService.addCourier();
+            return ResponseEntity.noContent().build(); // 204 No Content si ajout réussi
+        } catch (Exception e) {
+            // Renvoyer une erreur générique 500 (Internal Server Error)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne du serveur.");
+        }
     }
 
     /**
      * Delete the last courier
+     * @return A ResponseEntity object containing the result of the deletion
+     *        204 No Content if deletion is successful
+     *        400 Bad Request if deletion is not possible
+     *        500 Internal Server Error if an error occurs
      */
     @DeleteMapping("/deleteCourier")
-    public void deleteCourier() {
+    public ResponseEntity<String> deleteCourier() {
         try {
             optimodService.deleteCourier();
+            return ResponseEntity.noContent().build(); // 204 No Content si suppression réussie
+        } catch (IllegalStateException e) {
+            // Renvoyer une erreur 400 (Bad Request) avec le message d'erreur
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
+            // Renvoyer une erreur générique 500 (Internal Server Error)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne du serveur.");
         }
     }
 
@@ -434,25 +508,48 @@ public class OptimodController {
      * Assign a courier to a delivery request
      *
      * @param body A map containing the courier id and the delivery request id
-     * @return The DeliveryRequest object updated
+     * @return A ResponseEntity object containing the result of the assignment
+     *        204 No Content if assignment is successful
+     *        400 Bad Request if assignment is not possible
+     *        500 Internal Server Error if an error occurs
      */
     @PutMapping("/assignCourier")
-    public DeliveryRequest assignCourier(@RequestBody Map<String, Long> body) {
-        Long idCourier = body.get("courierId");
-        Long idDeliveryRequest = body.get("deliveryRequestId");
-        System.out.println("Assigning courier " + idCourier + " to delivery request " + idDeliveryRequest);
-        return optimodService.assignCourier(idCourier, idDeliveryRequest);
+    public ResponseEntity<String> assignCourier(@RequestBody Map<String, Long> body) {
+        try {
+            Long courierId = body.get("courierId");
+            Long deliveryRequestId = body.get("deliveryRequestId");
+
+            optimodService.assignCourier(courierId, deliveryRequestId);
+            return ResponseEntity.noContent().build(); // 204 No Content si assignation réussie
+        } catch (IllegalStateException e) {
+            // Renvoyer une erreur 400 (Bad Request) avec le message d'erreur
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            // Renvoyer une erreur générique 500 (Internal Server Error)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne du serveur.");
+        }
     }
 
     /**
      * Calculate the optimal route
      *
-     * @return A list of node ids representing the optimal route
+     * @return A list of list of Long containing the optimal route
+     *         The first list contains the ids of the couriers
+     *         The following lists contain the ids of the delivery requests for each courier
+     * @throws IllegalStateException If the optimal route cannot be calculated
      */
     @GetMapping("/calculateOptimalRoute")
-    public List<List<Long>> calculateOptimalRoute() {// throws Exception {
-        System.out.println("Calculating optimal route");
-        return optimodService.calculateOptimalRoute();
+    public ResponseEntity<?> calculateOptimalRoute() {
+        try {
+            List<List<Long>> optimalRoute = optimodService.calculateOptimalRoute();
+            return ResponseEntity.ok(optimalRoute);
+        } catch (IllegalStateException e) {
+            // Renvoyer une erreur 400 (Bad Request) avec le message d'erreur
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            // Renvoyer une erreur générique 500 (Internal Server Error)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne du serveur.");
+        }
     }
 
     /**
