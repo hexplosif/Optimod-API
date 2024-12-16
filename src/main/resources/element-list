@@ -1,0 +1,5 @@
+com.hexplosif.OptimodBackEnd
+com.hexplosif.OptimodBackEnd.controller
+com.hexplosif.OptimodBackEnd.model
+com.hexplosif.OptimodBackEnd.repository
+com.hexplosif.OptimodBackEnd.service
