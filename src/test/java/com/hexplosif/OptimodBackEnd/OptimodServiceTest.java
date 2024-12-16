@@ -371,16 +371,17 @@ public class OptimodServiceTest {
         optimodService.loadSegment("src/test/java/data/petitPlanTest.xml");
         optimodService.loadDeliveryRequest("src/test/java/data/demandePetit1Test.xml");
         DeliveryRequest deliveryRequest = optimodService.findAllDeliveryRequests().iterator().next();
+        optimodService.addCourier();
         Courier courier = optimodService.findAllCouriers().iterator().next();
         deliveryRequest.setIdCourier(courier.getId());
         optimodService.saveDeliveryRequest(deliveryRequest);
 
         Map<Long, List<Long>> route = optimodService.calculateOptimalRoute();
 
-        assertTrue("The route is incorrect", route.get(1L).get(0) == 25175791L);
-        assertTrue("The route is incorrect", route.get(1L).get(1) == 2129259178L);
-        assertTrue("The route is incorrect", route.get(1L).get(2) == 26086130L);
-        assertTrue("The route is incorrect", route.get(1L).get(3) == 2129259178L);
-        assertTrue("The route is incorrect", route.get(1L).get(4) == 25175791L);
+        assertTrue("The route is incorrect", route.get(courier.getId()).get(0) == 25175791L);
+        assertTrue("The route is incorrect", route.get(courier.getId()).get(1) == 2129259178L);
+        assertTrue("The route is incorrect", route.get(courier.getId()).get(2) == 26086130L);
+        assertTrue("The route is incorrect", route.get(courier.getId()).get(3) == 2129259178L);
+        assertTrue("The route is incorrect", route.get(courier.getId()).get(4) == 25175791L);
     }
 }
