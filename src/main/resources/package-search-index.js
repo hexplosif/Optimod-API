@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.hexplosif.OptimodBackEnd"},{"l":"com.hexplosif.OptimodBackEnd.controller"},{"l":"com.hexplosif.OptimodBackEnd.model"},{"l":"com.hexplosif.OptimodBackEnd.repository"},{"l":"com.hexplosif.OptimodBackEnd.service"}];updateSearchResults();
