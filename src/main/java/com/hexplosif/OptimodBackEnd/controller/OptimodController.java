@@ -5,12 +5,18 @@ import com.hexplosif.OptimodBackEnd.model.DeliveryRequest;
 import com.hexplosif.OptimodBackEnd.model.Node;
 import com.hexplosif.OptimodBackEnd.model.Segment;
 import com.hexplosif.OptimodBackEnd.service.OptimodService;
+import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -561,8 +567,49 @@ public class OptimodController {
     }
 
     /**
+     * Save the session to an XML file and download it
+     * @return A ResponseEntity object containing the result of the save
+     *        200 OK if the session is saved successfully
+     *        500 Internal Server Error if an error occurs
+     */
+    @GetMapping("/saveSession")
+    public ResponseEntity<Resource> saveSession() {
+        try {
+            File file = optimodService.saveSession();
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"")
+                    .body(resource);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    /**
+     * Restore the session from an XML file
+     * @return A ResponseEntity object containing the result of the restoration
+     *        200 OK if the session is restored successfully
+     *        500 Internal Server Error if an error occurs
+     */
+    @GetMapping("/restoreSession")
+    public ResponseEntity<String> restoreSession(@RequestParam("file") MultipartFile file) {
+        try {
+            String XMLFileName = saveUploadedFile(file);
+            optimodService.deleteAllDeliveryRequests();
+            optimodService.deleteAllSegments();
+            optimodService.deleteAllNodes();
+            optimodService.restoreSession(XMLFileName);
+            return ResponseEntity.ok("La session a été restaurée avec succès !");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne du serveur.");
+        }
+    }
+
+    /**
      * @param file - The file to save
-     * @return tmpFileName - The name of the temporary file
+     * @return tempFileName - The name of the temporary file
      * @throws IOException - If an error occurs while saving the file
      */
     private String saveUploadedFile(MultipartFile file) throws IOException {

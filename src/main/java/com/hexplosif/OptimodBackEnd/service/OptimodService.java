@@ -18,6 +18,10 @@ import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -412,8 +416,18 @@ public class OptimodService {
     }
 
     /**
-     * Get a delivery request by its id
+     * Create deliveryRequests
      *
+     * @param deliveryRequests The list of delivery requests to create
+     * @return The list of delivery requests created
+     */
+    public Iterable<DeliveryRequest> createDeliveryRequests(Iterable<DeliveryRequest> deliveryRequests) {
+        deliveryRequestRepository.saveAll(deliveryRequests);
+        return deliveryRequests;
+    }
+
+    /**
+     * Get a delivery request by its id
      * @param id The id of the delivery request
      * @return The delivery request
      * @throws IllegalStateException If an error occurs
@@ -496,6 +510,7 @@ public class OptimodService {
             throw new IllegalStateException(e.getMessage());
         }
     }
+
 
 
     /**
@@ -693,6 +708,224 @@ public class OptimodService {
         }
 
         return listeRoutes;
+    }
+
+    /**
+     * Save the session to an XML file
+     * @return The XML file
+     */
+    public File saveSession() throws Exception {
+        try {
+            // Création du document XML comme dans votre méthode existante
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.newDocument();
+
+            Element root = document.createElement("session");
+            document.appendChild(root);
+
+            // Save nodes
+            Element nodes = document.createElement("nodes");
+            root.appendChild(nodes);
+
+            Iterable<Node> allNodes = nodeRepository.findAll();
+            for (Node node : allNodes) {
+                Element nodeElement = document.createElement("node");
+                nodeElement.setAttribute("id", String.valueOf(node.getId()));
+                nodeElement.setAttribute("latitude", String.valueOf(node.getLatitude()));
+                nodeElement.setAttribute("longitude", String.valueOf(node.getLongitude()));
+                nodes.appendChild(nodeElement);
+            }
+
+            // Save segments
+            Element segments = document.createElement("segments");
+            root.appendChild(segments);
+
+            Iterable<Segment> allSegments = segmentRepository.findAll();
+            for (Segment segment : allSegments) {
+                Element segmentElement = document.createElement("segment");
+                segmentElement.setAttribute("origin", String.valueOf(segment.getIdOrigin()));
+                segmentElement.setAttribute("destination", String.valueOf(segment.getIdDestination()));
+                segmentElement.setAttribute("length", String.valueOf(segment.getLength()));
+                segmentElement.setAttribute("name", segment.getName());
+                segments.appendChild(segmentElement);
+            }
+
+            // Save delivery requests
+            Element deliveryRequests = document.createElement("deliveryRequests");
+            root.appendChild(deliveryRequests);
+
+            Iterable<DeliveryRequest> allDeliveryRequests = deliveryRequestRepository.findAll();
+            for (DeliveryRequest deliveryRequest : allDeliveryRequests) {
+                Element deliveryRequestElement = document.createElement("deliveryRequest");
+                deliveryRequestElement.setAttribute("pickup", String.valueOf(deliveryRequest.getIdPickup()));
+                deliveryRequestElement.setAttribute("delivery", String.valueOf(deliveryRequest.getIdDelivery()));
+                deliveryRequestElement.setAttribute("warehouse", String.valueOf(deliveryRequest.getIdWarehouse()));
+                deliveryRequestElement.setAttribute("courier", String.valueOf(deliveryRequest.getIdCourier()));
+                deliveryRequests.appendChild(deliveryRequestElement);
+            }
+
+            // Création d'un fichier temporaire
+            File file = File.createTempFile("session", ".xml");
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(document);
+            StreamResult result = new StreamResult(file);
+
+            transformer.transform(source, result);
+
+            return file;
+        } catch (Exception e) {
+            throw new Exception("Error saving session: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Restore the session from an XML file
+     * @param XMLFileName The XML file
+     */
+    public void restoreSession(String XMLFileName) throws Exception {
+        try {
+            File XMLFile = new File(XMLFileName);
+            Document document = parseXMLFile(XMLFile);
+
+            // Check if <session> is present
+            if (!document.getDocumentElement().getNodeName().equals("session")) {
+                throw new IllegalStateException("No 'session' tag found in the XML file");
+            }
+
+            // Check if there is other tags than <nodes>, <segments> and <deliveryRequests>, if so, throw an exception
+            NodeList allNode = document.getElementsByTagName("*");
+            for (int i = 0; i < allNode.getLength(); i++) {
+                if (!allNode.item(i).getNodeName().equals("nodes") && !allNode.item(i).getNodeName().equals("segments") && !allNode.item(i).getNodeName().equals("deliveryRequests") &&
+                        !allNode.item(i).getNodeName().equals("node") && !allNode.item(i).getNodeName().equals("segment") && !allNode.item(i).getNodeName().equals("deliveryRequest")) {
+                    throw new IllegalStateException("Invalid tag found in the XML file");
+                }
+            }
+
+            NodeList listeNodes = document.getElementsByTagName("node");
+            // Integrity check
+            if (listeNodes.getLength() == 0) {
+                throw new IllegalStateException("No 'node' tag found in the XML file");
+            }
+
+            List<Node> tmpListNodes = new ArrayList<>();
+
+            for (int i = 0; i < listeNodes.getLength(); i++) {
+                org.w3c.dom.Node node = listeNodes.item(i);
+
+                if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+                    Element elementNode = (Element) node;
+
+                    Node nodeElement = getNode(elementNode, i);
+
+                    tmpListNodes.add(nodeElement);
+                }
+            }
+
+            createNodes(tmpListNodes);
+
+            NodeList listeSegments = document.getElementsByTagName("segment");
+            // Integrity check
+            if (listeSegments.getLength() == 0) {
+                throw new IllegalStateException("No 'segment' tag found in the XML file");
+            }
+
+            List<Segment> tmpListSegments = new ArrayList<>();
+
+            for (int i = 0; i < listeSegments.getLength(); i++) {
+                org.w3c.dom.Node segment = listeSegments.item(i);
+
+                if (segment.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+                    Element elementSegment = (Element) segment;
+
+                    String origineTroncon = elementSegment.getAttribute("origin");
+                    // Integrity check
+                    if (origineTroncon.isEmpty()) {
+                        throw new IllegalStateException("No origin found for the segment : " + i);
+                    }
+
+                    String destinationTroncon = elementSegment.getAttribute("destination");
+
+                    // Integrity check
+                    if (destinationTroncon.isEmpty()) {
+                        throw new IllegalStateException("No destination found for the segment : " + i);
+                    }
+
+                    String longueurTroncon = elementSegment.getAttribute("length");
+
+                    // Integrity check
+                    if (longueurTroncon.isEmpty()) {
+                        throw new IllegalStateException("No length found for the segment : " + i);
+                    }
+
+                    String nomRueTroncon = elementSegment.getAttribute("name");
+
+                    // Il n'y a pas de nom de rue pour tous les segments
+
+                    Segment segmentElement = new Segment();
+                    segmentElement.setIdOrigin(Long.parseLong(origineTroncon));
+                    segmentElement.setIdDestination(Long.parseLong(destinationTroncon));
+                    segmentElement.setLength(Double.parseDouble(longueurTroncon));
+                    segmentElement.setName(nomRueTroncon);
+
+                    tmpListSegments.add(segmentElement);
+                }
+            }
+
+            createSegments(tmpListSegments);
+
+            NodeList listeDeliveryRequests = document.getElementsByTagName("deliveryRequest");
+            // Integrity check
+            if (listeDeliveryRequests.getLength() == 0) {
+                throw new IllegalStateException("No 'deliveryRequest' tag found in the XML file");
+            }
+
+            List<DeliveryRequest> tmpListDeliveryRequests = new ArrayList<>();
+
+            for (int i = 0; i < listeDeliveryRequests.getLength(); i++) {
+                org.w3c.dom.Node deliveryRequest = listeDeliveryRequests.item(i);
+
+                if (deliveryRequest.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+                    Element elementDeliveryRequest = (Element) deliveryRequest;
+
+                    String adresseEnlevement = elementDeliveryRequest.getAttribute("pickup");
+                    // Integrity check
+                    if (adresseEnlevement.isEmpty()) {
+                        throw new IllegalStateException("No pickup address found for the delivery request : " + i);
+                    }
+
+                    String adresseLivraison = elementDeliveryRequest.getAttribute("delivery");
+                    // Integrity check
+                    if (adresseLivraison.isEmpty()) {
+                        throw new IllegalStateException("No delivery address found for the delivery request : " + i);
+                    }
+
+                    String adresseEntrepot = elementDeliveryRequest.getAttribute("warehouse");
+                    // Integrity check
+                    if (adresseEntrepot.isEmpty()) {
+                        throw new IllegalStateException("No warehouse address found for the delivery request : " + i);
+                    }
+
+                    String idCourier = elementDeliveryRequest.getAttribute("courier");
+
+                    DeliveryRequest deliveryRequestElement = new DeliveryRequest();
+                    deliveryRequestElement.setIdPickup(Long.parseLong(adresseEnlevement));
+                    deliveryRequestElement.setIdDelivery(Long.parseLong(adresseLivraison));
+                    deliveryRequestElement.setIdWarehouse(Long.parseLong(adresseEntrepot));
+                    if (!idCourier.isEmpty()) {
+                        deliveryRequestElement.setIdCourier(Long.parseLong(idCourier));
+                    }
+
+                    tmpListDeliveryRequests.add(deliveryRequestElement);
+                }
+            }
+
+            createDeliveryRequests(tmpListDeliveryRequests);
+
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     private Map<Long, Map<Long, Double>> buildGraph() {
