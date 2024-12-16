@@ -124,10 +124,19 @@ public class OptimodController {
 
     /**
      * Delete - Delete all nodes
+     * @return A ResponseEntity object containing the result of the deletion
+     *    204 No Content if deletion is successful
+     *    500 Internal Server Error if an error occurs
      */
     @DeleteMapping("/nodes")
-    public void deleteNodes() {
-        optimodService.deleteAllNodes();
+    public ResponseEntity<String> deleteNodes() {
+        try {
+            optimodService.deleteAllNodes();
+            return ResponseEntity.noContent().build(); // 204 No Content si suppression réussie
+        } catch (Exception e) {
+            // Renvoyer une erreur générique 500 (Internal Server Error)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne du serveur.");
+        }
     }
 
     /**

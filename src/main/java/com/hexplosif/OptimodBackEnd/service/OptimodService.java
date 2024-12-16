@@ -56,6 +56,14 @@ public class OptimodService {
                 throw new IllegalStateException("No 'reseau' tag found in the XML file");
             }
 
+            // Check if there is other tags than <noeud>, <reseau> and <troncon>, if so, throw an exception
+            NodeList allNode = document.getElementsByTagName("*");
+            for (int i = 0; i < allNode.getLength(); i++) {
+                if (!allNode.item(i).getNodeName().equals("noeud") && !allNode.item(i).getNodeName().equals("reseau") && !allNode.item(i).getNodeName().equals("troncon")) {
+                    throw new IllegalStateException("Invalid tag found in the XML file");
+                }
+            }
+
             NodeList nodeList = document.getElementsByTagName("noeud");
 
             // Integrity check
@@ -210,6 +218,14 @@ public class OptimodService {
                 throw new IllegalStateException("No warehouse found in the first line of the XML file");
             }
 
+            // Check if there is other tags than <entrepot>, <demandeDeLivraisons> and <livraison>, if so, throw an exception
+            NodeList allNode = document.getElementsByTagName("*");
+            for (int i = 0; i < allNode.getLength(); i++) {
+                if (!allNode.item(i).getNodeName().equals("entrepot") && !allNode.item(i).getNodeName().equals("demandeDeLivraisons") && !allNode.item(i).getNodeName().equals("livraison")) {
+                    throw new IllegalStateException("Invalid tag found in the XML file");
+                }
+            }
+
             String warehouseAddress = ((Element) warehouse).getAttribute("adresse");
             // Integrity check
             if (warehouseAddress.isEmpty()) {
@@ -313,7 +329,15 @@ public class OptimodService {
     /**
      * Delete all nodes
      */
-    public void deleteAllNodes() {
+    public void deleteAllNodes() throws IllegalStateException {
+        // Check if the nodes are assigned to a delivery request, if so, throw an exception
+        List<DeliveryRequest> deliveryRequests = (List<DeliveryRequest>) deliveryRequestRepository.findAll();
+        List<Node> nodes = (List<Node>) nodeRepository.findAll();
+        for (DeliveryRequest deliveryRequest : deliveryRequests) {
+            if (nodes.stream().anyMatch(node -> node.getId().equals(deliveryRequest.getIdPickup()) || node.getId().equals(deliveryRequest.getIdDelivery()) || node.getId().equals(deliveryRequest.getIdWarehouse()))) {
+                throw new IllegalStateException("A node is assigned to a delivery request\nDelete the delivery requests first");
+            }
+        }
         nodeRepository.deleteAll();
     }
 
