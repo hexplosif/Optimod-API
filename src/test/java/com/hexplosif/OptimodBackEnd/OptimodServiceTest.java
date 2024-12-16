@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -374,12 +375,12 @@ public class OptimodServiceTest {
         deliveryRequest.setIdCourier(courier.getId());
         optimodService.saveDeliveryRequest(deliveryRequest);
 
-        List<List<Long>> route = optimodService.calculateOptimalRoute();
+        Map<Long, List<Long>> route = optimodService.calculateOptimalRoute();
 
-        assertTrue("The route is incorrect", route.get(0).get(0) == 25175791L);
-        assertTrue("The route is incorrect", route.get(0).get(1) == 2129259178L);
-        assertTrue("The route is incorrect", route.get(0).get(2) == 26086130L);
-        assertTrue("The route is incorrect", route.get(0).get(3) == 2129259178L);
-        assertTrue("The route is incorrect", route.get(0).get(4) == 25175791L);
+        assertTrue("The route is incorrect", route.get(1L).get(0) == 25175791L);
+        assertTrue("The route is incorrect", route.get(1L).get(1) == 2129259178L);
+        assertTrue("The route is incorrect", route.get(1L).get(2) == 26086130L);
+        assertTrue("The route is incorrect", route.get(1L).get(3) == 2129259178L);
+        assertTrue("The route is incorrect", route.get(1L).get(4) == 25175791L);
     }
 }
