@@ -25,14 +25,6 @@ public class OptimodBackEndApplication implements CommandLineRunner {
         Courier courier = new Courier();
         courier.setName("Courier 1");
         courierRepository.save(courier);
-
-        courier = new Courier();
-        courier.setName("Courier 2");
-        courierRepository.save(courier);
-
-        courier = new Courier();
-        courier.setName("Courier 3");
-        courierRepository.save(courier);
     }
 
 }

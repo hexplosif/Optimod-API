@@ -506,7 +506,6 @@ public class OptimodController {
 
     /**
      * Assign a courier to a delivery request
-     *
      * @param body A map containing the courier id and the delivery request id
      * @return A ResponseEntity object containing the result of the assignment
      *        204 No Content if assignment is successful

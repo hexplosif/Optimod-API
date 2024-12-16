@@ -215,6 +215,11 @@ public class OptimodService {
             if (warehouseAddress.isEmpty()) {
                 throw new IllegalStateException("No warehouse address found in the XML file");
             }
+            // Check if the warehouse is already in the database, if not throw an exception
+            Optional<Node> node = nodeRepository.findById(Long.parseLong(warehouseAddress));
+            if (node.isEmpty()) {
+                throw new IllegalStateException("The warehouse address is not in the map, please load a bigger map including the warehouse address");
+            }
 
             // Check if the warehouse is the same as other delivery requests that are already in the database, if not throw an exception
             List<DeliveryRequest> deliveryRequests = (List<DeliveryRequest>) deliveryRequestRepository.findAll();
@@ -235,11 +240,21 @@ public class OptimodService {
                     if (adresseEnlevement.isEmpty()) {
                         throw new IllegalStateException("No pickup address found for the delivery request : " + i);
                     }
+                    // Check if the pickup address is already in the database, if not throw an exception
+                    Optional<Node> nodePickup = nodeRepository.findById(Long.parseLong(adresseEnlevement));
+                    if (nodePickup.isEmpty()) {
+                        throw new IllegalStateException("The pickup address is not in the map, please load a bigger map including the pickup address");
+                    }
 
                     String adresseLivraison = elementLivraison.getAttribute("adresseLivraison");
                     // Integrity check
                     if (adresseLivraison.isEmpty()) {
                         throw new IllegalStateException("No delivery address found for the delivery request : " + i);
+                    }
+                    // Check if the delivery address is already in the database, if not throw an exception
+                    Optional<Node> nodeDelivery = nodeRepository.findById(Long.parseLong(adresseLivraison));
+                    if (nodeDelivery.isEmpty()) {
+                        throw new IllegalStateException("The delivery address is not in the map, please load a bigger map including the delivery address");
                     }
 
                     DeliveryRequest deliveryRequest = new DeliveryRequest();
@@ -247,7 +262,6 @@ public class OptimodService {
                     deliveryRequest.setIdPickup(Long.parseLong(adresseEnlevement));
                     deliveryRequest.setIdWarehouse(Long.parseLong(warehouseAddress));
 
-                    //System.out.println("DeliveryRequest: " + deliveryRequest.getIdDelivery() + ", Pickup: " + deliveryRequest.getIdPickup() + ", WarehouseLocation: " + deliveryRequest.getIdWarehouse());
                     deliveryRequestRepository.save(deliveryRequest);
                 }
             }
