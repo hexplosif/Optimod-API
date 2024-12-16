@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,11 +24,12 @@ public class OptimodController {
 
     /**
      * Load a map from an XML file
+     *
      * @param file - The XML file containing the map
      * @return A ResponseEntity object containing the map data
-     *         200 OK if the map is loaded successfully
-     *         400 Bad Request if an error occurs while loading the map
-     *         500 Internal Server Error if an error occurs
+     * 200 OK if the map is loaded successfully
+     * 400 Bad Request if an error occurs while loading the map
+     * 500 Internal Server Error if an error occurs
      */
     @PostMapping("/loadMap")
     public ResponseEntity<String> loadMap(@RequestParam("file") MultipartFile file) {
@@ -54,11 +54,12 @@ public class OptimodController {
 
     /**
      * Load a delivery request from an XML file
+     *
      * @param file - The XML file containing the delivery request
      * @return A ResponseEntity object containing the delivery request data
-     *         200 OK if the delivery request is loaded successfully
-     *         400 Bad Request if an error occurs while loading the delivery request
-     *         500 Internal Server Error if an error occurs
+     * 200 OK if the delivery request is loaded successfully
+     * 400 Bad Request if an error occurs while loading the delivery request
+     * 500 Internal Server Error if an error occurs
      */
     @PostMapping("/loadDeliveryRequest")
     public ResponseEntity<String> loadDeliveryRequest(@RequestParam("file") MultipartFile file) {
@@ -273,7 +274,7 @@ public class OptimodController {
     }
 
     /**
-     * Delete - Delete an segment
+     * Delete - Delete a segment
      *
      * @param id - The id of the segment to delete
      */
@@ -287,8 +288,8 @@ public class OptimodController {
      *
      * @param delivery_request An object delivery_request
      * @return A ResponseEntity object containing the delivery_request object saved
-     *   200 OK if the delivery_request is saved successfully
-     *   500 Internal Server Error if an error occurs
+     * 200 OK if the delivery_request is saved successfully
+     * 500 Internal Server Error if an error occurs
      */
     @PostMapping("/delivery_request")
     public ResponseEntity<DeliveryRequest> createDeliveryRequest(@RequestBody DeliveryRequest delivery_request) {
@@ -304,8 +305,8 @@ public class OptimodController {
      *
      * @param id The id of the delivery_request
      * @return A ResponseEntity object containing the delivery_request object
-     *    200 OK if the delivery_request is fetched successfully
-     *    500 Internal Server Error if an error occurs
+     * 200 OK if the delivery_request is fetched successfully
+     * 500 Internal Server Error if an error occurs
      */
     @GetMapping("/delivery_request/{id}")
     public ResponseEntity<Optional<DeliveryRequest>> getDeliveryRequest(@PathVariable("id") final Long id) {
@@ -318,9 +319,10 @@ public class OptimodController {
 
     /**
      * Read - Get all delivery_requests
+     *
      * @return - A ResponseEntity object containing the list of delivery_requests
-     *     200 OK if the delivery_requests are fetched successfully
-     *     500 Internal Server Error if an error occurs
+     * 200 OK if the delivery_requests are fetched successfully
+     * 500 Internal Server Error if an error occurs
      */
     @GetMapping("/delivery_requests")
     public ResponseEntity<Iterable<DeliveryRequest>> getDeliveryRequests() {
@@ -333,9 +335,10 @@ public class OptimodController {
 
     /**
      * Delete - Delete all delivery_requests
+     *
      * @return A ResponseEntity object containing the result of the deletion
-     *     204 No Content if deletion is successful
-     *     500 Internal Server Error if an error occurs
+     * 204 No Content if deletion is successful
+     * 500 Internal Server Error if an error occurs
      */
     @DeleteMapping("/delivery_requests")
     public ResponseEntity<String> deleteDeliveryRequests() {
@@ -354,8 +357,8 @@ public class OptimodController {
      * @param id - The id of the delivery_request to update
      *           delivery_request - The delivery_request object updated
      * @return A ResponseEntity object containing the delivery_request object updated
-     *      200 OK if the delivery_request is updated successfully
-     *      500 Internal Server Error if an error occurs
+     * 200 OK if the delivery_request is updated successfully
+     * 500 Internal Server Error if an error occurs
      */
     @PutMapping("/delivery_request/{id}")
     public ResponseEntity<DeliveryRequest> updateDeliveryRequest(@PathVariable("id") final Long id, @RequestBody DeliveryRequest delivery_request) {
@@ -368,11 +371,12 @@ public class OptimodController {
 
     /**
      * Delete - Delete an delivery_request
+     *
      * @param id - The id of the delivery_request to delete
      * @return A ResponseEntity object containing the result of the deletion
-     *       204 No Content if deletion is successful
-     *       400 Bad Request if deletion is not possible
-     *       500 Internal Server Error if an error occurs
+     * 204 No Content if deletion is successful
+     * 400 Bad Request if deletion is not possible
+     * 500 Internal Server Error if an error occurs
      */
     @DeleteMapping("/delivery_request/{id}")
     public ResponseEntity<String> deleteDeliveryRequest(@PathVariable("id") final Long id) {
@@ -390,10 +394,11 @@ public class OptimodController {
 
     /**
      * Create - Add a new courier
+     *
      * @param courier An object courier
      * @return A ResponseEntity object containing the courier object saved
-     *        200 OK if the courier is saved successfully
-     *        500 Internal Server Error if an error occurs
+     * 200 OK if the courier is saved successfully
+     * 500 Internal Server Error if an error occurs
      */
     @PostMapping("/courier")
     public ResponseEntity<Courier> createCourier(@RequestBody Courier courier) {
@@ -421,8 +426,8 @@ public class OptimodController {
 
     /**
      * Read - Get all couriers
+     *
      * @return - A ResponseEntity object containing the list of couriers
-     * @throws Exception - If an error occurs while fetching the couriers
      */
     @GetMapping("/couriers")
     public ResponseEntity<Iterable<Courier>> getCouriers() {
@@ -435,9 +440,10 @@ public class OptimodController {
 
     /**
      * Delete - Delete all couriers
+     *
      * @return A ResponseEntity object containing the result of the deletion
-     *      204 No Content if deletion is successful
-     *      500 Internal Server Error if an error occurs
+     * 204 No Content if deletion is successful
+     * 500 Internal Server Error if an error occurs
      */
     @DeleteMapping("/couriers")
     public ResponseEntity<String> deleteCouriers() {
@@ -453,11 +459,12 @@ public class OptimodController {
 
     /**
      * Delete - Delete a courier
+     *
      * @param id - The id of the courier to delete
      * @return A ResponseEntity object containing the result of the deletion
-     *       204 No Content if deletion is successful
-     *       400 Bad Request if deletion is not possible
-     *       500 Internal Server Error if an error occurs
+     * 204 No Content if deletion is successful
+     * 400 Bad Request if deletion is not possible
+     * 500 Internal Server Error if an error occurs
      */
     @DeleteMapping("/courier/{id}")
     public ResponseEntity<String> deleteCourier(@PathVariable("id") final Long id) {
@@ -477,9 +484,10 @@ public class OptimodController {
 
     /**
      * Add a courier
+     *
      * @return A ResponseEntity object containing the result of the addition
-     *       204 No Content if addition is successful
-     *       500 Internal Server Error if an error occurs
+     * 204 No Content if addition is successful
+     * 500 Internal Server Error if an error occurs
      */
     @PostMapping("/addCourier")
     public ResponseEntity<String> addCourier() {
@@ -494,10 +502,11 @@ public class OptimodController {
 
     /**
      * Delete the last courier
+     *
      * @return A ResponseEntity object containing the result of the deletion
-     *        204 No Content if deletion is successful
-     *        400 Bad Request if deletion is not possible
-     *        500 Internal Server Error if an error occurs
+     * 204 No Content if deletion is successful
+     * 400 Bad Request if deletion is not possible
+     * 500 Internal Server Error if an error occurs
      */
     @DeleteMapping("/deleteCourier")
     public ResponseEntity<String> deleteCourier() {
@@ -517,9 +526,9 @@ public class OptimodController {
      * Assign a courier to a delivery request
      * @param body A map containing the courier id and the delivery request id
      * @return A ResponseEntity object containing the result of the assignment
-     *        204 No Content if assignment is successful
-     *        400 Bad Request if assignment is not possible
-     *        500 Internal Server Error if an error occurs
+     * 204 No Content if assignment is successful
+     * 400 Bad Request if assignment is not possible
+     * 500 Internal Server Error if an error occurs
      */
     @PutMapping("/assignCourier")
     public ResponseEntity<String> assignCourier(@RequestBody Map<String, Long> body) {
@@ -542,8 +551,8 @@ public class OptimodController {
      * Calculate the optimal route
      *
      * @return A list of list of Long containing the optimal route
-     *         The first list contains the ids of the couriers
-     *         The following lists contain the ids of the delivery requests for each courier
+     * The first list contains the ids of the couriers
+     * The following lists contain the ids of the delivery requests for each courier
      * @throws IllegalStateException If the optimal route cannot be calculated
      */
     @GetMapping("/calculateOptimalRoute")
@@ -561,9 +570,9 @@ public class OptimodController {
     }
 
     /**
-     * @param file - The file to save
-     * @return tmpFileName - The name of the temporary file
-     * @throws IOException - If an error occurs while saving the file
+     * @param file The file to save
+     * @return tmpFileName The name of the temporary file
+     * @throws IOException If an error occurs while saving the file
      */
     private String saveUploadedFile(MultipartFile file) throws IOException {
         String tempFileName = System.getProperty("java.io.tmpdir") + file.getOriginalFilename();

@@ -91,22 +91,21 @@ public class OptimodService {
     }
 
     private static Node getNode(Element noeud, int i) {
-        Element elementNoeud = noeud;
 
-        String idNoeud = elementNoeud.getAttribute("id");
+        String idNoeud = noeud.getAttribute("id");
 
         // Integrity check
         if (idNoeud.isEmpty()) {
             throw new IllegalStateException("No id found for the node : " + i);
         }
-        String latitudeNoeud = elementNoeud.getAttribute("latitude");
+        String latitudeNoeud = noeud.getAttribute("latitude");
 
         // Integrity check
         if (latitudeNoeud.isEmpty()) {
             throw new IllegalStateException("No latitude found for the node : " + i);
         }
 
-        String longitudeNoeud = elementNoeud.getAttribute("longitude");
+        String longitudeNoeud = noeud.getAttribute("longitude");
 
         // Integrity check
         if (longitudeNoeud.isEmpty()) {
@@ -618,7 +617,6 @@ public class OptimodService {
      *
      * @param idCourier         The id of the courier
      * @param idDeliveryRequest The id of the delivery request
-     * @return The delivery request
      */
     public void assignCourier(Long idCourier, Long idDeliveryRequest) throws IllegalStateException {
         try {
