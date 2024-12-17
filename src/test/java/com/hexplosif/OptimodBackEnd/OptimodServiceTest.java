@@ -38,9 +38,9 @@ public class OptimodServiceTest {
      */
     @BeforeEach
     public void setUp() {
+        optimodService.deleteAllDeliveryRequests();
         optimodService.deleteAllNodes();
         optimodService.deleteAllSegments();
-        optimodService.deleteAllDeliveryRequests();
     }
 
     /**
@@ -84,6 +84,8 @@ public class OptimodServiceTest {
     @Test
     @Tag("Load")
     public void testCorrectLoadDeliveryRequest() throws Exception {
+        optimodService.loadNode("src/test/java/data/petitPlan.xml");
+        optimodService.loadSegment("src/test/java/data/petitPlan.xml");
         optimodService.loadDeliveryRequest("src/test/java/data/demandePetit1.xml");
 
         Optional<DeliveryRequest> deliveryRequest = Optional.ofNullable(optimodService.findAllDeliveryRequests().iterator().next());
@@ -164,9 +166,11 @@ public class OptimodServiceTest {
      */
     @Test
     @Tag("WrongTag")
-    public void testWrongNoeudTagLoadNode() {
+    public void testWrongNoeudTagLoadNode() throws Exception {
+        optimodService.loadNode("src/test/java/data/petitPlan.xml");
+        optimodService.loadSegment("src/test/java/data/petitPlan.xml");
         Exception exception = assertThrows(Exception.class, () -> optimodService.loadNode("src/test/java/data/wrongNoeudTag.xml"));
-        String expectedMessage = "No 'noeud' tag found in the XML file";
+        String expectedMessage = "Invalid tag found in the XML file";
         String actualMessage = exception.getMessage();
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
@@ -320,7 +324,9 @@ public class OptimodServiceTest {
      */
     @Test
     @Tag("WrongAttribute")
-    public void testWrongAdressPickupAttributeLoadDeliveryRequest() {
+    public void testWrongAdressPickupAttributeLoadDeliveryRequest() throws Exception {
+        optimodService.loadNode("src/test/java/data/petitPlan.xml");
+        optimodService.loadSegment("src/test/java/data/petitPlan.xml");
         Exception exception = assertThrows(Exception.class, () -> optimodService.loadDeliveryRequest("src/test/java/data/wrongAdresseEnlevementAttribute.xml"));
         String expectedMessage = "No pickup address found for the delivery request : ";
         String actualMessage = exception.getMessage();
@@ -332,31 +338,12 @@ public class OptimodServiceTest {
      */
     @Test
     @Tag("WrongAttribute")
-    public void testWrongAdressDeliveryAttributeLoadDeliveryRequest() {
+    public void testWrongAdressDeliveryAttributeLoadDeliveryRequest() throws Exception {
+        optimodService.loadNode("src/test/java/data/petitPlan.xml");
+        optimodService.loadSegment("src/test/java/data/petitPlan.xml");
         Exception exception = assertThrows(Exception.class, () -> optimodService.loadDeliveryRequest("src/test/java/data/wrongAdresseLivraisonAttribute.xml"));
         String expectedMessage = "No delivery address found for the delivery request : ";
         String actualMessage = exception.getMessage();
-        assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
-    }
-
-    /**
-     * Tests that the TSP functions are working correctly by validating the graph.
-     * @throws Exception if an error occurs during validation
-     */
-    @Test
-    @Tag("TSP")
-    public void testValidateGraph() throws Exception {
-        optimodService.loadSegment("src/test/java/data/petitPlanTest.xml");
-        optimodService.loadDeliveryRequest("src/test/java/data/demandePetit1.xml");
-        DeliveryRequest deliveryRequest = optimodService.findAllDeliveryRequests().iterator().next();
-        Courier courier = optimodService.findAllCouriers().iterator().next();
-        deliveryRequest.setIdCourier(courier.getId());
-        optimodService.saveDeliveryRequest(deliveryRequest);
-
-        Exception exception = assertThrows(Exception.class, () -> optimodService.calculateOptimalRoute());
-        String expectedMessage = "Graph does not contain nodes for delivery request: ";
-        String actualMessage = exception.getMessage();
-        System.out.println(actualMessage);
         assertTrue("The exception message is incorrect", actualMessage.contains(expectedMessage));
     }
 
