@@ -595,6 +595,7 @@ public class OptimodController {
         try {
             String XMLFileName = saveUploadedFile(file);
             optimodService.deleteAllDeliveryRequests();
+            optimodService.deleteAllCouriers();
             optimodService.deleteAllSegments();
             optimodService.deleteAllNodes();
             optimodService.restoreSession(XMLFileName);
