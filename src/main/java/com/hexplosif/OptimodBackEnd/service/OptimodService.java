@@ -666,12 +666,6 @@ public class OptimodService {
             throw new IllegalStateException("No delivery requests found.");
         }
 
-        System.out.println("-----------------------------------------------------------------------------------");
-        for (DeliveryRequest deliveryRequest : deliveryRequests) {
-            System.out.println("Courier: " + deliveryRequest.getIdCourier());
-        }
-        System.out.println("-----------------------------------------------------------------------------------");
-
         // Fetch all couriers
         List<Courier> courierList = (List<Courier>) courierRepository.findAll();
 
@@ -794,132 +788,132 @@ public class OptimodService {
 
             // Check if there is other tags than <nodes>, <segments> and <deliveryRequests>, if so, throw an exception
             NodeList allNode = document.getElementsByTagName("*");
+
             for (int i = 0; i < allNode.getLength(); i++) {
-                if (!allNode.item(i).getNodeName().equals("nodes") && !allNode.item(i).getNodeName().equals("segments") && !allNode.item(i).getNodeName().equals("deliveryRequests") &&
-                        !allNode.item(i).getNodeName().equals("node") && !allNode.item(i).getNodeName().equals("segment") && !allNode.item(i).getNodeName().equals("deliveryRequest")) {
+                if (!allNode.item(i).getNodeName().equals("session") && !allNode.item(i).getNodeName().equals("nodes") && !allNode.item(i).getNodeName().equals("segments") && !allNode.item(i).getNodeName().equals("deliveryRequests") && !allNode.item(i).getNodeName().equals("node") && !allNode.item(i).getNodeName().equals("segment") && !allNode.item(i).getNodeName().equals("deliveryRequest")) {
                     throw new IllegalStateException("Invalid tag found in the XML file");
                 }
             }
 
             NodeList listeNodes = document.getElementsByTagName("node");
             // Integrity check
-            if (listeNodes.getLength() == 0) {
-                throw new IllegalStateException("No 'node' tag found in the XML file");
-            }
+            if (listeNodes.getLength() != 0) {
 
-            List<Node> tmpListNodes = new ArrayList<>();
+                List<Node> tmpListNodes = new ArrayList<>();
 
-            for (int i = 0; i < listeNodes.getLength(); i++) {
-                org.w3c.dom.Node node = listeNodes.item(i);
+                for (int i = 0; i < listeNodes.getLength(); i++) {
+                    org.w3c.dom.Node node = listeNodes.item(i);
 
-                if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-                    Element elementNode = (Element) node;
+                    if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+                        Element elementNode = (Element) node;
 
-                    Node nodeElement = getNode(elementNode, i);
+                        Node nodeElement = getNode(elementNode, i);
 
-                    tmpListNodes.add(nodeElement);
+                        tmpListNodes.add(nodeElement);
+                    }
                 }
-            }
 
-            createNodes(tmpListNodes);
+                createNodes(tmpListNodes);
+            }
 
             NodeList listeSegments = document.getElementsByTagName("segment");
             // Integrity check
-            if (listeSegments.getLength() == 0) {
-                throw new IllegalStateException("No 'segment' tag found in the XML file");
-            }
+            if (listeSegments.getLength() != 0) {
 
-            List<Segment> tmpListSegments = new ArrayList<>();
+                    List<Segment> tmpListSegments = new ArrayList<>();
 
-            for (int i = 0; i < listeSegments.getLength(); i++) {
-                org.w3c.dom.Node segment = listeSegments.item(i);
+                    for (int i = 0; i < listeSegments.getLength(); i++) {
+                        org.w3c.dom.Node segment = listeSegments.item(i);
 
-                if (segment.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-                    Element elementSegment = (Element) segment;
+                        if (segment.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+                            Element elementSegment = (Element) segment;
 
-                    String origineTroncon = elementSegment.getAttribute("origin");
-                    // Integrity check
-                    if (origineTroncon.isEmpty()) {
-                        throw new IllegalStateException("No origin found for the segment : " + i);
+                            String origineTroncon = elementSegment.getAttribute("origin");
+                            // Integrity check
+                            if (origineTroncon.isEmpty()) {
+                                throw new IllegalStateException("No origin found for the segment : " + i);
+                            }
+
+                            String destinationTroncon = elementSegment.getAttribute("destination");
+
+                            // Integrity check
+                            if (destinationTroncon.isEmpty()) {
+                                throw new IllegalStateException("No destination found for the segment : " + i);
+                            }
+
+                            String longueurTroncon = elementSegment.getAttribute("length");
+
+                            // Integrity check
+                            if (longueurTroncon.isEmpty()) {
+                                throw new IllegalStateException("No length found for the segment : " + i);
+                            }
+
+                            String nomRueTroncon = elementSegment.getAttribute("name");
+
+                            // Il n'y a pas de nom de rue pour tous les segments
+
+                            Segment segmentElement = new Segment();
+                            segmentElement.setIdOrigin(Long.parseLong(origineTroncon));
+                            segmentElement.setIdDestination(Long.parseLong(destinationTroncon));
+                            segmentElement.setLength(Double.parseDouble(longueurTroncon));
+                            segmentElement.setName(nomRueTroncon);
+
+                            tmpListSegments.add(segmentElement);
                     }
-
-                    String destinationTroncon = elementSegment.getAttribute("destination");
-
-                    // Integrity check
-                    if (destinationTroncon.isEmpty()) {
-                        throw new IllegalStateException("No destination found for the segment : " + i);
-                    }
-
-                    String longueurTroncon = elementSegment.getAttribute("length");
-
-                    // Integrity check
-                    if (longueurTroncon.isEmpty()) {
-                        throw new IllegalStateException("No length found for the segment : " + i);
-                    }
-
-                    String nomRueTroncon = elementSegment.getAttribute("name");
-
-                    // Il n'y a pas de nom de rue pour tous les segments
-
-                    Segment segmentElement = new Segment();
-                    segmentElement.setIdOrigin(Long.parseLong(origineTroncon));
-                    segmentElement.setIdDestination(Long.parseLong(destinationTroncon));
-                    segmentElement.setLength(Double.parseDouble(longueurTroncon));
-                    segmentElement.setName(nomRueTroncon);
-
-                    tmpListSegments.add(segmentElement);
                 }
-            }
 
-            createSegments(tmpListSegments);
+                createSegments(tmpListSegments);
+            }
 
             NodeList listeDeliveryRequests = document.getElementsByTagName("deliveryRequest");
             // Integrity check
-            if (listeDeliveryRequests.getLength() == 0) {
-                throw new IllegalStateException("No 'deliveryRequest' tag found in the XML file");
-            }
+            if (listeDeliveryRequests.getLength() != 0) {
 
-            List<DeliveryRequest> tmpListDeliveryRequests = new ArrayList<>();
+                List<DeliveryRequest> tmpListDeliveryRequests = new ArrayList<>();
 
-            for (int i = 0; i < listeDeliveryRequests.getLength(); i++) {
-                org.w3c.dom.Node deliveryRequest = listeDeliveryRequests.item(i);
+                for (int i = 0; i < listeDeliveryRequests.getLength(); i++) {
+                    org.w3c.dom.Node deliveryRequest = listeDeliveryRequests.item(i);
 
-                if (deliveryRequest.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-                    Element elementDeliveryRequest = (Element) deliveryRequest;
+                    if (deliveryRequest.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+                        Element elementDeliveryRequest = (Element) deliveryRequest;
 
-                    String adresseEnlevement = elementDeliveryRequest.getAttribute("pickup");
-                    // Integrity check
-                    if (adresseEnlevement.isEmpty()) {
-                        throw new IllegalStateException("No pickup address found for the delivery request : " + i);
+                        String adresseEnlevement = elementDeliveryRequest.getAttribute("pickup");
+                        // Integrity check
+                        if (adresseEnlevement.isEmpty()) {
+                            throw new IllegalStateException("No pickup address found for the delivery request : " + i);
+                        }
+
+                        String adresseLivraison = elementDeliveryRequest.getAttribute("delivery");
+                        // Integrity check
+                        if (adresseLivraison.isEmpty()) {
+                            throw new IllegalStateException("No delivery address found for the delivery request : " + i);
+                        }
+
+                        String adresseEntrepot = elementDeliveryRequest.getAttribute("warehouse");
+                        // Integrity check
+                        if (adresseEntrepot.isEmpty()) {
+                            throw new IllegalStateException("No warehouse address found for the delivery request : " + i);
+                        }
+
+                        String idCourier = elementDeliveryRequest.getAttribute("courier");
+
+                        DeliveryRequest deliveryRequestElement = new DeliveryRequest();
+                        deliveryRequestElement.setIdPickup(Long.parseLong(adresseEnlevement));
+                        deliveryRequestElement.setIdDelivery(Long.parseLong(adresseLivraison));
+                        deliveryRequestElement.setIdWarehouse(Long.parseLong(adresseEntrepot));
+
+                        if (!idCourier.equals("null")) {
+                            addCourier();
+                            List<Courier> couriers = (List<Courier>) courierRepository.findAll();
+                            Long idCourierLong = couriers.get(couriers.size() - 1).getId();
+                            deliveryRequestElement.setIdCourier(idCourierLong);
+                        }
+                        tmpListDeliveryRequests.add(deliveryRequestElement);
                     }
-
-                    String adresseLivraison = elementDeliveryRequest.getAttribute("delivery");
-                    // Integrity check
-                    if (adresseLivraison.isEmpty()) {
-                        throw new IllegalStateException("No delivery address found for the delivery request : " + i);
-                    }
-
-                    String adresseEntrepot = elementDeliveryRequest.getAttribute("warehouse");
-                    // Integrity check
-                    if (adresseEntrepot.isEmpty()) {
-                        throw new IllegalStateException("No warehouse address found for the delivery request : " + i);
-                    }
-
-                    String idCourier = elementDeliveryRequest.getAttribute("courier");
-
-                    DeliveryRequest deliveryRequestElement = new DeliveryRequest();
-                    deliveryRequestElement.setIdPickup(Long.parseLong(adresseEnlevement));
-                    deliveryRequestElement.setIdDelivery(Long.parseLong(adresseLivraison));
-                    deliveryRequestElement.setIdWarehouse(Long.parseLong(adresseEntrepot));
-                    if (!idCourier.isEmpty()) {
-                        deliveryRequestElement.setIdCourier(Long.parseLong(idCourier));
-                    }
-
-                    tmpListDeliveryRequests.add(deliveryRequestElement);
                 }
-            }
 
-            createDeliveryRequests(tmpListDeliveryRequests);
+                createDeliveryRequests(tmpListDeliveryRequests);
+            }
 
         } catch (Exception e) {
             throw new Exception(e.getMessage());

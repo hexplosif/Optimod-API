@@ -18,10 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 public class OptimodController {
@@ -593,7 +590,7 @@ public class OptimodController {
      *        200 OK if the session is restored successfully
      *        500 Internal Server Error if an error occurs
      */
-    @GetMapping("/restoreSession")
+    @PostMapping("/restoreSession")
     public ResponseEntity<String> restoreSession(@RequestParam("file") MultipartFile file) {
         try {
             String XMLFileName = saveUploadedFile(file);
@@ -603,7 +600,7 @@ public class OptimodController {
             optimodService.restoreSession(XMLFileName);
             return ResponseEntity.ok("La session a été restaurée avec succès !");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne du serveur.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
