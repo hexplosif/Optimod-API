@@ -21,11 +21,15 @@ Pour lancer le projet il y a besoin de ce projet-ci ainsi que le FrontEnd:
 
 [Optimod-FrontEnd](https://github.com/hexplosif/Optimod-FrontEnd.git)
 
-Il faut ensuite executer le projet MAVEN. Si ce n'est pas proposé par l'IDE, il faut executer le fichier `OptimodApplication.java`.
+Il faut ensuite executer le projet MAVEN. Si ce n'est pas proposé par l'IDE, il faut executer le fichier `OptimodApplication`.
 
-Puis il faut faire de même pour le BackEnd. Si encore une fois l'IDE ne propose pas d'executer le projet, il faut executer le fichier `OptimodBackEndApplication.java`.
+Puis il faut faire de même pour le BackEnd. Si encore une fois l'IDE ne propose pas d'executer le projet, il faut executer le fichier `OptimodBackEndApplication`.
 
 Au moment du lancement, il est possible que l'IDE vous demande d'accepter les annotations Lombok. Pour cela, il suffit de télécharger le plugin Lombok sur votre IDE. (Ce sera normalement proposé par votre IDE)
+
+## Lancement des tests
+
+Pour lancer les tests, il suffit de lancer les fichiers `OptimodControllerTest` et `OptimodServiceTest` dans le dossier `src/test/java/com/hexplosif/OptimodBackEnd`.
 
 ## Accès a l'application web
 
@@ -59,6 +63,7 @@ La view est gérée par Thymeleaf, qui permet de générer des pages HTML dynami
 - ![HTML](https://img.shields.io/badge/-HTML-black?style=flat-circle&logo=html5)
 - ![CSS](https://img.shields.io/badge/-CSS-black?style=flat-circle&logo=css3)
 - ![JavaScript](https://img.shields.io/badge/-JavaScript-black?style=flat-circle&logo=javascript)
+- 
 ## Auteurs
 
 - [Adam Schlee](https://github.com/AdSchl2E)
