@@ -34,10 +34,10 @@ Pour lancer les tests, il suffit de lancer les fichiers `OptimodControllerTest` 
 ## Accès a l'application web
 
 Pour accéder à l'application web, il suffit de se rendre sur la page suivante :
-[localhost:9001](localhost:9001)
+[localhost:9001](http://localhost:9001)
 
 L'API est accessible à l'adresse suivante :
-[localhost:9000](localhost:9000)
+[localhost:9000](http://localhost:9000)
 
 ## Architecture
 
