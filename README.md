@@ -41,10 +41,7 @@ L'API est accessible à l'adresse suivante :
 
 ## Accès à la documentation
 
-Pour accéder à la documentation du BackEnd, il suffit de se rendre sur la page suivante :
-[documentation](http://localhost:63342/Optimod-BackEnd/index.html)
-
-Si la page ne s'affiche pas correctement, il faut ouvrir le fichier `src/main/resources/index.html` dans un navigateur web. 
+Pour accéder à la documentation du BackEnd, il suffit d'ouvrir le fichier `src/main/resources/index.html` dans un navigateur web. 
 
 ## Architecture
 
