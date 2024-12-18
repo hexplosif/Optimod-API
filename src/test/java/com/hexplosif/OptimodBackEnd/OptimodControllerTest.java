@@ -284,7 +284,7 @@ public class OptimodControllerTest {
 
         // Step 3: Delete all nodes
         mockMvc.perform(delete("/nodes"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         // Step 4: Verify that the list of nodes is empty
         mockMvc.perform(get("/nodes"))
