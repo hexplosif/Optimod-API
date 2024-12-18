@@ -67,7 +67,7 @@ La view est gérée par Thymeleaf, qui permet de générer des pages HTML dynami
 - ![HTML](https://img.shields.io/badge/-HTML-black?style=flat-circle&logo=html5)
 - ![CSS](https://img.shields.io/badge/-CSS-black?style=flat-circle&logo=css3)
 - ![JavaScript](https://img.shields.io/badge/-JavaScript-black?style=flat-circle&logo=javascript)
-- 
+
 ## Auteurs
 
 - [Adam Schlee](https://github.com/AdSchl2E)
